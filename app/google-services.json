@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "472745725944",
+    "project_id": "reader-app-9b195",
+    "storage_bucket": "reader-app-9b195.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472745725944:android:36e3e8d22703aec723900d",
+        "android_client_info": {
+          "package_name": "com.example.readerapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADprIry4HwhYfR8Ik8CP1LlZMnpj3tUWk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
