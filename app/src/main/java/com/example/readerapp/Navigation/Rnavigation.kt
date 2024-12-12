@@ -9,6 +9,8 @@ import com.example.readerapp.RHomeScreen
 
 import com.example.readerapp.Screen.Login.RLoginScreen
 import com.example.readerapp.Screen.RSplashScreen
+import com.example.readerapp.Screen.jobs.AddJobScreen
+import com.example.readerapp.Screen.jobs.JobListScreen
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -23,6 +25,12 @@ fun RNavigation(){
         }
         composable(ReaderScreens.ReaderHomeScreen.name){
             RHomeScreen()
+        }
+        composable(ReaderScreens.AddJobScreen.name){
+            AddJobScreen(navController=navController, insertJob = {})
+        }
+        composable(ReaderScreens.JobListScreen.name){
+            JobListScreen(navController=navController, jobs = emptyList())
         }
     }
 }
