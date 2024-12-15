@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Work
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -24,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.readerapp.Navigation.RNavigation
 import com.example.readerapp.ui.theme.ReaderAppTheme
@@ -38,10 +36,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.draw.shadow
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.Navigation
+import com.example.readerapp.Navigation.ReaderScreens
+
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -50,7 +52,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ReaderAppTheme {
-                  ReaderApp()
+                RNavigation()
             }
         }
     }
@@ -72,7 +74,7 @@ fun ReaderApp() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RHomeScreen() {
+fun RHomeScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -96,7 +98,7 @@ fun RHomeScreen() {
                     .shadow(4.dp, RoundedCornerShape(0.dp))
             )
         },
-        bottomBar = { BottomNavigationBar() }
+        bottomBar = { BottomNavigationBar(navController=navController) }
     ) { paddingValues ->
         Surface(
             modifier = Modifier
@@ -172,7 +174,7 @@ fun StatisticsCard(label: String, value: String, icon: ImageVector) {
 }
 
 @Composable
-fun BottomNavigationBar() {
+fun BottomNavigationBar(navController: NavHostController) {
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.primary,
         tonalElevation = 8.dp // Apply tonal elevation for shadow
@@ -185,13 +187,13 @@ fun BottomNavigationBar() {
         )
         NavigationBarItem(
             selected = false,
-            onClick = {  },
+            onClick = {navController.navigate(ReaderScreens.DonationPortal.name)  },
             icon = { Icon(Icons.Filled.Favorite, contentDescription = "Donation Portal") },
             label = { Text("Donations") }
         )
         NavigationBarItem(
             selected = false,
-            onClick = {  },
+            onClick = { navController.navigate(ReaderScreens.JobListScreen.name) },
             icon = { Icon(Icons.Filled.Work, contentDescription = "Job Postings") },
             label = { Text("Jobs") }
         )
@@ -204,9 +206,9 @@ fun BottomNavigationBar() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    RHomeScreen()
-}
-
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    RHomeScreen(navController)
+//}
+//

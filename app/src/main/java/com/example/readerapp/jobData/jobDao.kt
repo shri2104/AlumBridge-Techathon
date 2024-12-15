@@ -12,13 +12,11 @@ data class JobPosting(
     val description: String
 )
 
-
 @Dao
 interface JobDao {
     @Insert
     suspend fun insertJob(job: JobPosting)
 
     @Query("SELECT * FROM jobList")
-    fun getAllJobs(): List<JobPosting>
-
+    fun getAllJobs(): Flow<List<JobPosting>>
 }

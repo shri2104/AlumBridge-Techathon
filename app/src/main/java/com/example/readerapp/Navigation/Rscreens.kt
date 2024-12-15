@@ -5,8 +5,8 @@ enum class ReaderScreens{
     LoginScreen,
     CreateAccountScreen,
     ReaderHomeScreen,
-    SearchScreen,
-    DetailScreen,
+    DonationPortal,
+    DonationPortal2,
     UpdateScreen,
     ReaderStatsScreen,
     JobListScreen,
@@ -18,8 +18,8 @@ enum class ReaderScreens{
             LoginScreen.name->LoginScreen
             CreateAccountScreen.name->CreateAccountScreen
             ReaderHomeScreen.name->ReaderHomeScreen
-            SearchScreen.name->SearchScreen
-            DetailScreen.name->DetailScreen
+            DonationPortal.name->DonationPortal
+            DonationPortal2.name->DonationPortal2
             UpdateScreen.name->UpdateScreen
             ReaderStatsScreen.name->ReaderStatsScreen
             JobListScreen.name->JobListScreen
