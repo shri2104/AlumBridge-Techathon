@@ -9,8 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.readerapp.JobViewModel
-import com.example.readerapp.jobData.JobPosting
+import com.example.readerapp.viewmodel.JobViewModel
 
 @Composable
 fun JobListScreen(navController: NavController, viewModel: JobViewModel) {

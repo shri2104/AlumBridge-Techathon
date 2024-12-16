@@ -114,9 +114,7 @@ fun DonationSubmissionScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.Top
         ) {
             Text("Donation Submission", style = MaterialTheme.typography.h5)
-
             Spacer(modifier = Modifier.height(16.dp))
-
             OutlinedTextField(
                 value = amount,
                 onValueChange = { amount = it },
@@ -124,20 +122,15 @@ fun DonationSubmissionScreen(navController: NavHostController) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth()
             )
-
             Spacer(modifier = Modifier.height(8.dp))
-
             OutlinedTextField(
                 value = message,
                 onValueChange = { message = it },
                 label = { Text("Message (Optional)") },
                 modifier = Modifier.fillMaxWidth()
             )
-
             Spacer(modifier = Modifier.height(16.dp))
-
             Button(onClick = {
-
                 proofFileName = "dummy_receipt.pdf"
             }, modifier = Modifier.fillMaxWidth()) {
                 Text("Browse Payment Proof")

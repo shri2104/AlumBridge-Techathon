@@ -1,4 +1,4 @@
-package com.example.readerapp
+package com.example.readerapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -7,7 +7,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.readerapp.JobViewModel
+import com.example.readerapp.viewmodel.JobViewModel
 import com.example.readerapp.RHomeScreen
 
 import com.example.readerapp.Screen.Login.RLoginScreen

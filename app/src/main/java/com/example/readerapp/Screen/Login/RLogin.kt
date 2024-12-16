@@ -1,6 +1,5 @@
 package com.example.readerapp.Screen.Login
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,15 +32,14 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.example.readerapp.Navigation.ReaderScreens
 import com.example.readerapp.R
 import com.example.readerapp.Screen.logo
 import com.example.readerapp.component.EmailInput
 import com.example.readerapp.component.PasswordInput
+import com.example.readerapp.viewmodel.LoginScreenViewModel
 
 @ExperimentalComposeUiApi
 @Composable

@@ -1,4 +1,4 @@
-package com.example.readerapp.Screen.Login
+package com.example.readerapp.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.LiveData
