@@ -17,6 +17,7 @@ import com.example.readerapp.Screen.donationportal.BankDetailsScreen
 import com.example.readerapp.Screen.donationportal.DonationSubmissionScreen
 import com.example.readerapp.Screen.jobs.AddJobScreen
 import com.example.readerapp.Screen.jobs.JobListScreen
+import com.example.readerapp.Screen.profile.ProfileScreen
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -45,6 +46,8 @@ fun RNavigation(){
         composable(ReaderScreens.DonationPortal2.name) {
             DonationSubmissionScreen(navController = navController)
         }
-
+        composable(ReaderScreens.ProfileScreen.name){
+            ProfileScreen(navController = navController)
+        }
     }
 }
