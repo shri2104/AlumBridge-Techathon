@@ -74,6 +74,7 @@ fun RLoginScreen(
                 ) { email, password ->
                     viewModel.createUserWithEmailAndPassword(email, password) {
                         navController.navigate(ReaderScreens.ReaderHomeScreen.name)
+                        //navController.navigate(ReaderScreens.ProfileScreen.name)
                     }
                 }
             }

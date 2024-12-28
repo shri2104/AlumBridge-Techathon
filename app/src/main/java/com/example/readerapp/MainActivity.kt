@@ -82,13 +82,14 @@ fun RHomeScreen(navController: NavHostController) {
                     Text("AlumBridge", style = MaterialTheme.typography.titleLarge)
                 },
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {navController.navigate(ReaderScreens.ProfileScreen.name) }) {
                         Icon(
                             imageVector = Icons.Filled.Person,
                             contentDescription = "Profile",
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
+
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
