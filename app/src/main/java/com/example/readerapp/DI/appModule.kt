@@ -2,6 +2,8 @@ package com.example.readerapp.DI
 
 import android.content.Context
 import androidx.room.Room
+import com.example.readerapp.ProfileData.ProfileDao
+import com.example.readerapp.ProfileData.ProfileDatabase
 import com.example.readerapp.jobData.JobDao
 import com.example.readerapp.jobData.JobDatabase
 import com.example.readerapp.jobData.jobRepo
@@ -28,4 +30,12 @@ object AppModule {
     @Singleton
     @Provides
     fun provideJobRepo(jobDao: JobDao): jobRepo = jobRepo(jobDao)
+    @Singleton
+    @Provides
+    fun provideProfileDatabase(context: Context): ProfileDatabase =
+        Room.databaseBuilder(context, ProfileDatabase::class.java, "profile_database").build()
+
+    @Singleton
+    @Provides
+    fun provideProfileDao(profileDatabase: ProfileDatabase): ProfileDao = profileDatabase.profileDao()
 }
