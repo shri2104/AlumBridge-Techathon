@@ -14,6 +14,7 @@ enum class ReaderScreens{
     ProfileScreen,
     LoginSelectionScreen,
     InstituteLoginScreen,
+    EventsPostings,
     InstituteHomeScreen;
     companion object{
         fun fromRoute(route: String?):ReaderScreens
@@ -29,6 +30,7 @@ enum class ReaderScreens{
             JobListScreen.name->JobListScreen
             AddJobScreen.name->AddJobScreen
             ProfileScreen.name->ProfileScreen
+            EventsPostings.name->EventsPostings
             LoginSelectionScreen.name->LoginSelectionScreen
             InstituteLoginScreen.name->InstituteLoginScreen
             InstituteHomeScreen.name->InstituteLoginScreen
