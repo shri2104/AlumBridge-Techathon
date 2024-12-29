@@ -5,8 +5,10 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,19 +30,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.readerapp.Navigation.ReaderScreens
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
-
 
 @Composable
 fun RSplashScreen(navController: NavController) {
-    // Animation scale state
     val scale = remember {
         Animatable(0f)
     }
-
-    // Animation and Navigation Logic
     LaunchedEffect(key1 = true) {
-        // Perform the scaling animation
         scale.animateTo(
             targetValue = 0.9f,
             animationSpec = tween(
@@ -50,43 +48,60 @@ fun RSplashScreen(navController: NavController) {
                 }
             )
         )
-        // Delay for splash duration
         delay(2000L)
-
-        // Navigate based on authentication state
-        if (FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()) {
-            navController.navigate(ReaderScreens.LoginScreen.name)
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            val firestore = FirebaseFirestore.getInstance()
+            firestore.collection("users")
+                .document(user.uid)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val userType = document.getString("role")
+                        if (userType == "student") {
+                            navController.navigate(ReaderScreens.ReaderHomeScreen.name)
+                        } else {
+                            navController.navigate(ReaderScreens.InstituteHomeScreen.name)
+                        }
+                    } else {
+                        navController.navigate(ReaderScreens.LoginScreen.name)
+                    }
+                }
+                .addOnFailureListener {
+                    navController.navigate(ReaderScreens.LoginScreen.name)
+                }
         } else {
-            navController.navigate(ReaderScreens.ReaderHomeScreen.name)
+            navController.navigate(ReaderScreens.LoginScreen.name)
         }
     }
-
-    // Splash Screen UI
-    Surface(
-        modifier = Modifier
-            .padding(15.dp)
-            .size(330.dp)
-            .scale(scale.value), // Apply scale animation
-        shape = CircleShape,
-        color = Color.White,
-        border = BorderStroke(width = 2.dp, color = Color.LightGray)
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier.padding(1.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Surface(
+            modifier = Modifier
+                .size(330.dp)
+                .scale(scale.value),
+            shape = CircleShape,
+            color = Color.White,
+            border = BorderStroke(width = 2.dp, color = Color.LightGray)
         ) {
-            logo() // Logo
-            Spacer(modifier = Modifier.height(15.dp))
-            Text(
-                text = "\"Connect with Alums \"",
-                style = MaterialTheme.typography.headlineSmall,
-                color = Color.LightGray
-            )
+            Column(
+                modifier = Modifier.padding(1.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                logo()
+                Spacer(modifier = Modifier.height(15.dp))
+                Text(
+                    text = "\"Connect with Alums \"",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.LightGray
+                )
+            }
         }
     }
 }
-
 @Composable
 fun logo(modifier: Modifier = Modifier) {
     Text(

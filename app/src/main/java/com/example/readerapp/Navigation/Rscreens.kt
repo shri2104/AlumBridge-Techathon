@@ -11,7 +11,10 @@ enum class ReaderScreens{
     ReaderStatsScreen,
     JobListScreen,
     AddJobScreen,
-    ProfileScreen;
+    ProfileScreen,
+    LoginSelectionScreen,
+    InstituteLoginScreen,
+    InstituteHomeScreen;
     companion object{
         fun fromRoute(route: String?):ReaderScreens
         =when(route?.substringBefore('/')){
@@ -26,6 +29,9 @@ enum class ReaderScreens{
             JobListScreen.name->JobListScreen
             AddJobScreen.name->AddJobScreen
             ProfileScreen.name->ProfileScreen
+            LoginSelectionScreen.name->LoginSelectionScreen
+            InstituteLoginScreen.name->InstituteLoginScreen
+            InstituteHomeScreen.name->InstituteLoginScreen
             null->ReaderHomeScreen
             else -> throw IllegalArgumentException("Route $route is not recognized")
         }

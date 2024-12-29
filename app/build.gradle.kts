@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.runtime.livedata)
+    implementation(libs.androidx.material3.android)
     // Room
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
@@ -108,7 +109,8 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
-    implementation ("androidx.compose.material:material-icons-extended:1.7.5")
+    implementation (libs.androidx.material3.v120)
+    implementation (libs.androidx.material.icons.extended)
 }
 
 // Enable error type correction for kapt
