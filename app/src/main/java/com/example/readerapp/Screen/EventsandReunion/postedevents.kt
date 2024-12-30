@@ -58,44 +58,63 @@ fun PostedEventsScreen(eventViewModel: EventViewModel, navController: NavHostCon
                     modifier = Modifier.fillMaxSize()
                 )
 
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    item {
+                if (events.isEmpty()) {
+                    // Show a message if no events are available
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center)
+                            .padding(16.dp)
+                    ) {
                         Text(
-                            text = "Latest Events",
+                            text = "No upcoming events",
                             style = MaterialTheme.typography.h6.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 20.sp
                             ),
-                            modifier = Modifier.padding(16.dp),
-                            color = Color.Black
+                            color = Color.Black,
+                            modifier = Modifier.align(Alignment.Center)
                         )
                     }
-                    items(events.takeLast(3)) { event ->  // Reversed order for latest events
-                        EventItem(event)
-                    }
-                    item {
-                        Divider(modifier = Modifier.padding(horizontal = 16.dp), color = Color.Gray)
-                    }
-                    item {
-                        Text(
-                            text = "All Events",
-                            style = MaterialTheme.typography.h6.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp
-                            ),
-                            modifier = Modifier.padding(16.dp),
-                            color = Color.Black
-                        )
-                    }
-                    items(events) { event ->
-                        EventItem(event)
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        item {
+                            Text(
+                                text = "Latest Events",
+                                style = MaterialTheme.typography.h6.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp
+                                ),
+                                modifier = Modifier.padding(16.dp),
+                                color = Color.Black
+                            )
+                        }
+                        items(events.takeLast(3)) { event ->  // Reversed order for latest events
+                            EventItem(event)
+                        }
+                        item {
+                            Divider(modifier = Modifier.padding(horizontal = 16.dp), color = Color.Gray)
+                        }
+                        item {
+                            Text(
+                                text = "All Events",
+                                style = MaterialTheme.typography.h6.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp
+                                ),
+                                modifier = Modifier.padding(16.dp),
+                                color = Color.Black
+                            )
+                        }
+                        items(events) { event ->
+                            EventItem(event)
+                        }
                     }
                 }
             }
         }
     )
 }
-
 
 @Composable
 fun EventItem(event: Event) {
@@ -173,3 +192,4 @@ fun EventItem(event: Event) {
         }
     }
 }
+

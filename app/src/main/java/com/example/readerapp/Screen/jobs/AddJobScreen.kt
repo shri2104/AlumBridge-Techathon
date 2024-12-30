@@ -16,22 +16,101 @@ fun AddJobScreen(navController: NavController, insertJob: (JobPosting) -> Unit) 
     var role by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            TextField(value = title, onValueChange = { title = it }, label = { Text("Title") })
-            TextField(value = company, onValueChange = { company = it }, label = { Text("Company") })
-            TextField(value = role, onValueChange = { role = it }, label = { Text("Role") })
-            TextField(value = description, onValueChange = { description = it }, label = { Text("Description") })
-
-            Button(
-                onClick = {
-                    insertJob(JobPosting(title = title, company = company, role = role, description = description))
-                    navController.popBackStack()
-                },
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("Post a Job", style = MaterialTheme.typography.titleLarge) },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
             ) {
-                Text("Add Job")
+                // Job Title Field
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Job Title") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                        focusedLabelColor = MaterialTheme.colorScheme.primary
+                    ),
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Company Field
+                OutlinedTextField(
+                    value = company,
+                    onValueChange = { company = it },
+                    label = { Text("Company") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                        focusedLabelColor = MaterialTheme.colorScheme.primary
+                    ),
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Role Field
+                OutlinedTextField(
+                    value = role,
+                    onValueChange = { role = it },
+                    label = { Text("Role") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                        focusedLabelColor = MaterialTheme.colorScheme.primary
+                    ),
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Job Description") },
+                    modifier = Modifier.fillMaxWidth().height(150.dp),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                        focusedLabelColor = MaterialTheme.colorScheme.primary
+                    ),
+                    maxLines = 5
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        insertJob(JobPosting(title = title, company = company, role = role, description = description))
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier.fillMaxWidth().height(50.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text("Post Job", color = MaterialTheme.colorScheme.onPrimary)
+                }
             }
         }
-    }
+    )
 }
