@@ -143,19 +143,19 @@ fun BottomInstituteNavigationBar(navController: NavController) {
         )
         NavigationBarItem(
             selected = false,
-            onClick = { },
+            onClick = {},
             icon = { Icon(Icons.Filled.Favorite, contentDescription = "Donation Portal") },
             label = { Text("Donations") }
         )
         NavigationBarItem(
             selected = false,
-            onClick = { },
+            onClick = {navController.navigate(ReaderScreens.JobListScreen.name)  },
             icon = { Icon(Icons.Filled.Work, contentDescription = "Job Postings") },
             label = { Text("Jobs") }
         )
         NavigationBarItem(
             selected = false,
-            onClick = { },
+            onClick = {navController.navigate(ReaderScreens.Directory.name)  },
             icon = { Icon(Icons.Filled.Group, contentDescription = "Alumni Directory") },
             label = { Text("Directory") }
         )

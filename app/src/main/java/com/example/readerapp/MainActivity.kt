@@ -200,16 +200,9 @@ fun BottomNavigationBar(navController: NavHostController) {
         )
         NavigationBarItem(
             selected = false,
-            onClick = {  },
+            onClick = {navController.navigate(ReaderScreens.Directory.name)   },
             icon = { Icon(Icons.Filled.Group, contentDescription = "Alumni Directory") },
             label = { Text("Directory") }
         )
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun DefaultPreview() {
-//    RHomeScreen(navController)
-//}
-//
