@@ -160,9 +160,3 @@ fun EventReunionsScreen(navController: NavHostController) {
         }
     )
 }
-@Preview(showBackground = true)
-@Composable
-fun PagePreview() {
-
-    EventReunionsScreen(navController)
-}
