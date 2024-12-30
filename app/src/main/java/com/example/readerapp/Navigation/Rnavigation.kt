@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.readerapp.viewmodel.JobViewModel
 import com.example.readerapp.RHomeScreen
+import com.example.readerapp.Screen.EventsandReunion.EventReunionsScreen
 import com.example.readerapp.Screen.Institute.InstituteDashBoard
 import com.example.readerapp.Screen.Login.RLoginScreen
 import com.example.readerapp.Screen.RSplashScreen
@@ -58,6 +59,9 @@ fun RNavigation() {
 //        }
         composable(ReaderScreens.InstituteHomeScreen.name) {
             InstituteDashBoard(navController = navController)
+        }
+        composable(ReaderScreens.EventsPostings.name) {
+            EventReunionsScreen(navController = navController)
         }
 //        composable("RegisterScreen/{userType}") { backStackEntry ->
 //            val userType = backStackEntry.arguments?.getString("userType") ?: "student"

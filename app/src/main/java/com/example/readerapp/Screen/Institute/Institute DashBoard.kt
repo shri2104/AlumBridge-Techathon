@@ -137,7 +137,7 @@ fun BottomInstituteNavigationBar(navController: NavController) {
     ) {
         NavigationBarItem(
             selected = false,
-            onClick = { },
+            onClick = { navController.navigate(ReaderScreens.EventsPostings.name)},
             icon = { Icon(Icons.Filled.Event, contentDescription = "Events & Reunions") },
             label = { Text("Events") }
         )
