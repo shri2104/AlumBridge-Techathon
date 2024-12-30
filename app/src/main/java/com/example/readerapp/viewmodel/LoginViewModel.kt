@@ -112,22 +112,22 @@ class LoginScreenViewModel : ViewModel() {
                 callback(false)
             }
     }
-    private val _displayNames = MutableLiveData<List<String>>()
-    val displayNames: LiveData<List<String>> = _displayNames
-
-    fun fetchDisplayNames() {
-        firestore.collection("users")
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val names = querySnapshot.documents.mapNotNull { document ->
-                    document.getString("displayName") // Adjust the field name as per your Firestore structure
-                }
-                _displayNames.value = names
-            }
-            .addOnFailureListener { exception ->
-                Log.d("FB", "Error fetching display names: ${exception.message}")
-            }
-    }
+//    private val _displayNames = MutableLiveData<List<String>>()
+//    val displayNames: LiveData<List<String>> = _displayNames
+//
+//    fun fetchDisplayNames() {
+//        firestore.collection("users")
+//            .get()
+//            .addOnSuccessListener { querySnapshot ->
+//                val names = querySnapshot.documents.mapNotNull { document ->
+//                    document.getString("displayName") // Adjust the field name as per your Firestore structure
+//                }
+//                _displayNames.value = names
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.d("FB", "Error fetching display names: ${exception.message}")
+//            }
+//    }
     fun registerInstitute(
         email: String,
         password: String,

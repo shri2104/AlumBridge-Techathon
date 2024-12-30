@@ -143,7 +143,7 @@ fun BottomInstituteNavigationBar(navController: NavController) {
         )
         NavigationBarItem(
             selected = false,
-            onClick = {},
+            onClick = {navController.navigate(ReaderScreens.DonationInfo.name)},
             icon = { Icon(Icons.Filled.Favorite, contentDescription = "Donation Portal") },
             label = { Text("Donations") }
         )

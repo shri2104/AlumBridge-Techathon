@@ -182,7 +182,7 @@ fun BottomNavigationBar(navController: NavHostController) {
     ) {
         NavigationBarItem(
             selected = false,
-            onClick = {  },
+            onClick = {navController.navigate(ReaderScreens.postedEvents.name)   },
             icon = { Icon(Icons.Filled.Event, contentDescription = "Events & Reunions") },
             label = { Text("Events") }
         )

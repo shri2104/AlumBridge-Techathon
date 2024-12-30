@@ -1,8 +1,4 @@
-package com.example.readerapp.Screen.EventsandReunion
-
-
-
-
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -11,16 +7,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.readerapp.Navigation.ReaderScreens
 import com.example.readerapp.R
+import com.example.readerapp.viewmodel.EventViewModel
 
 @Composable
-fun EventReunionsScreen(navController: NavHostController) {
+fun EventReunionsScreen(eventViewModel: EventViewModel, navController: NavHostController) {
+    val context = LocalContext.current
+    var headline by remember { mutableStateOf(TextFieldValue()) }
+    var description by remember { mutableStateOf(TextFieldValue()) }
+    var dates by remember { mutableStateOf(TextFieldValue()) }
+    var location by remember { mutableStateOf(TextFieldValue()) }
+    var eventType by remember { mutableStateOf("Select Event Type") }
+    var expanded by remember { mutableStateOf(false) }
+    val isFormValid = headline.text.isNotEmpty() && description.text.isNotEmpty() &&
+            dates.text.isNotEmpty() && location.text.isNotEmpty() &&
+            eventType != "Select Event Type"
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -44,9 +53,8 @@ fun EventReunionsScreen(navController: NavHostController) {
                         .fillMaxSize()
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Top
                 ) {
-                    var headline by remember { mutableStateOf(TextFieldValue()) }
                     OutlinedTextField(
                         value = headline,
                         onValueChange = { headline = it },
@@ -59,7 +67,6 @@ fun EventReunionsScreen(navController: NavHostController) {
                             cursorColor = Color(0xFF6200EE)
                         )
                     )
-                    var description by remember { mutableStateOf(TextFieldValue()) }
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
@@ -72,7 +79,6 @@ fun EventReunionsScreen(navController: NavHostController) {
                             cursorColor = Color(0xFF6200EE)
                         )
                     )
-                    var dates by remember { mutableStateOf(TextFieldValue()) }
                     OutlinedTextField(
                         value = dates,
                         onValueChange = { dates = it },
@@ -85,7 +91,6 @@ fun EventReunionsScreen(navController: NavHostController) {
                             cursorColor = Color(0xFF6200EE)
                         )
                     )
-                    var location by remember { mutableStateOf(TextFieldValue()) }
                     OutlinedTextField(
                         value = location,
                         onValueChange = { location = it },
@@ -98,8 +103,6 @@ fun EventReunionsScreen(navController: NavHostController) {
                             cursorColor = Color(0xFF6200EE)
                         )
                     )
-                    var eventType by remember { mutableStateOf("Select Event Type") }
-                    var expanded by remember { mutableStateOf(false) }
                     Box(modifier = Modifier.fillMaxWidth()) {
                         OutlinedButton(
                             onClick = { expanded = true },
@@ -133,28 +136,42 @@ fun EventReunionsScreen(navController: NavHostController) {
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = { },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
-                    ) {
-                        Text(text = "Import Event Poster", color = Color.White, fontSize = 16.sp)
-                    }
+                    Spacer(modifier = Modifier.height(32.dp)) // Space before the buttons
 
-                    Spacer(modifier = Modifier.height(16.dp))
                     Button(
-                        onClick = { },
+                        onClick = {
+                            eventViewModel.saveEvent(
+                                eventHeadline = headline.text,
+                                eventDescription = description.text,
+                                eventDates = dates.text,
+                                eventLocation = location.text,
+                                eventType = eventType
+                            )
+                            Toast.makeText(context, "Event Posted", Toast.LENGTH_SHORT).show()
+                            navController.navigate(ReaderScreens.postedEvents.name)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE)),
+                        enabled = isFormValid
                     ) {
                         Text(text = "POST", color = Color.White, fontSize = 16.sp)
                     }
+
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = {
+                            navController.navigate(ReaderScreens.postedEvents.name)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE)),
+                    ) {
+                        Text(text = "POSTED EVENTS", color = Color.White, fontSize = 16.sp)
+                    }
                 }
             }
         }

@@ -22,13 +22,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.readerapp.Navigation.ReaderScreens
 import com.example.readerapp.R
-
-
-
+import com.example.readerapp.viewmodel.DonationViewModel
 
 
 @Composable
-fun BankDetailsScreen(navController: NavController) {
+fun BankDetailsScreen(
+    navController: NavController,
+    donationViewModel: DonationViewModel
+) {
+    val donationState by donationViewModel.donation.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -71,10 +74,15 @@ fun BankDetailsScreen(navController: NavController) {
                     elevation = 4.dp
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text("Account Holder: Alumni Association", fontSize = 16.sp)
-                        Text("Bank Name: XYZ Bank", fontSize = 16.sp)
-                        Text("Account Number: 1234567890", fontSize = 16.sp)
-                        Text("IFSC Code: XYZB0000123", fontSize = 16.sp)
+                        if (donationState != null) {
+                            val donation = donationState!!
+                            Text("Account Holder: ${donation.accountHolderName}", fontSize = 16.sp)
+                            Text("Bank Name: ${donation.bankName}", fontSize = 16.sp)
+                            Text("Account Number: ${donation.accountNumber}", fontSize = 16.sp)
+                            Text("IFSC Code: ${donation.ifscCode}", fontSize = 16.sp)
+                        } else {
+                            Text("No donation details available.", fontSize = 16.sp, color = Color.Red)
+                        }
                     }
                 }
             }

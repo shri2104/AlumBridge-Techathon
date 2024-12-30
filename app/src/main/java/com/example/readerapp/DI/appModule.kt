@@ -4,9 +4,13 @@ import android.content.Context
 import androidx.room.Room
 import com.example.readerapp.ProfileData.ProfileDao
 import com.example.readerapp.ProfileData.ProfileDatabase
+import com.example.readerapp.donationdata.DonationDao
+import com.example.readerapp.donationdata.DonationDatabase
 import com.example.readerapp.jobData.JobDao
 import com.example.readerapp.jobData.JobDatabase
 import com.example.readerapp.jobData.jobRepo
+import com.example.readerapp.eventdata.EventDao
+import com.example.readerapp.eventdata.EventDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,19 +21,23 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
     @Singleton
     @Provides
     fun provideContext(@ApplicationContext context: Context): Context = context
     @Singleton
     @Provides
-    fun provideDatabase(context: Context): JobDatabase =
+    fun provideJobDatabase(context: Context): JobDatabase =
         Room.databaseBuilder(context, JobDatabase::class.java, "job_database").build()
+
     @Singleton
     @Provides
     fun provideJobDao(database: JobDatabase): JobDao = database.jobDao()
+
     @Singleton
     @Provides
     fun provideJobRepo(jobDao: JobDao): jobRepo = jobRepo(jobDao)
+
     @Singleton
     @Provides
     fun provideProfileDatabase(context: Context): ProfileDatabase =
@@ -38,4 +46,22 @@ object AppModule {
     @Singleton
     @Provides
     fun provideProfileDao(profileDatabase: ProfileDatabase): ProfileDao = profileDatabase.profileDao()
+
+    @Singleton
+    @Provides
+    fun provideDonationDatabase(context: Context): DonationDatabase =
+        Room.databaseBuilder(context, DonationDatabase::class.java, "donation_database").build()
+
+    @Singleton
+    @Provides
+    fun provideDonationDao(donationDatabase: DonationDatabase): DonationDao = donationDatabase.donationDao()
+
+    @Singleton
+    @Provides
+    fun provideEventDatabase(context: Context): EventDatabase =
+        Room.databaseBuilder(context, EventDatabase::class.java, "event_database").build()
+
+    @Singleton
+    @Provides
+    fun provideEventDao(eventDatabase: EventDatabase): EventDao = eventDatabase.eventDao()
 }
