@@ -1,5 +1,6 @@
 package com.example.readerapp.Screen
 
+import android.util.Log
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -43,12 +44,11 @@ fun RSplashScreen(navController: NavController) {
             targetValue = 0.9f,
             animationSpec = tween(
                 durationMillis = 800,
-                easing = {
-                    OvershootInterpolator(8f).getInterpolation(it)
-                }
+                easing = { OvershootInterpolator(8f).getInterpolation(it) }
             )
         )
         delay(2000L)
+
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
             val firestore = FirebaseFirestore.getInstance()
@@ -60,20 +60,25 @@ fun RSplashScreen(navController: NavController) {
                         val userType = document.getString("role")
                         if (userType == "student") {
                             navController.navigate(ReaderScreens.ReaderHomeScreen.name)
-                        } else {
+                        } else if (userType == "institute") {
                             navController.navigate(ReaderScreens.InstituteHomeScreen.name)
+                        } else {
+                            navController.navigate(ReaderScreens.LoginScreen.name)
                         }
                     } else {
+                        Log.d("FB", "User document does not exist")
                         navController.navigate(ReaderScreens.LoginScreen.name)
                     }
                 }
-                .addOnFailureListener {
+                .addOnFailureListener { exception ->
+                    Log.d("FB", "Error fetching user role: ${exception.message}")
                     navController.navigate(ReaderScreens.LoginScreen.name)
                 }
         } else {
             navController.navigate(ReaderScreens.LoginScreen.name)
         }
     }
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

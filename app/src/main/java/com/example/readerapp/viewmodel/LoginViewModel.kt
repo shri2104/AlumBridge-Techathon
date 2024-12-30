@@ -12,7 +12,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 
-
 class LoginScreenViewModel : ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
     private val firestore = FirebaseFirestore.getInstance()
@@ -20,7 +19,20 @@ class LoginScreenViewModel : ViewModel() {
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
 
-    // Function to sign in a student with validation for institute ID
+    private val _userDocumentExists = MutableLiveData(false)
+    val userDocumentExists: LiveData<Boolean> = _userDocumentExists
+
+    fun checkUserDocumentExistence(userId: String) {
+        firestore.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                _userDocumentExists.value = document.exists()
+            }
+            .addOnFailureListener {
+                Log.d("FB", "Error checking user document existence: ${it.message}")
+                _userDocumentExists.value = false
+            }
+    }
+
     fun signInStudent(
         email: String,
         password: String,
@@ -41,7 +53,6 @@ class LoginScreenViewModel : ViewModel() {
         }
     }
 
-    // Function to register a student with institute ID validation
     fun registerStudent(
         email: String,
         password: String,
@@ -71,25 +82,26 @@ class LoginScreenViewModel : ViewModel() {
         }
     }
 
-    // Function to handle login with user type differentiation (student or institute)
     fun signInWithEmailAndPassword(
         email: String,
         password: String,
-        userType: String, // student or institute
+        userType: String,
         home: () -> Unit
     ) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // After login success, call the callback to navigate to home
-                    home() // You can add specific logic for user type if needed
+                    val userId = auth.currentUser?.uid
+                    if (userId != null) {
+                        checkUserDocumentExistence(userId)
+                    }
+                    home()
                 } else {
                     Log.d("FB", "Login failed: ${task.exception?.message}")
                 }
             }
     }
 
-    // Validate the institute ID during registration
     private fun validateInstituteId(instituteId: String, callback: (Boolean) -> Unit) {
         firestore.collection("institutes").document(instituteId).get()
             .addOnSuccessListener { document ->
@@ -100,6 +112,7 @@ class LoginScreenViewModel : ViewModel() {
                 callback(false)
             }
     }
+
     fun registerInstitute(
         email: String,
         password: String,
@@ -113,19 +126,17 @@ class LoginScreenViewModel : ViewModel() {
                         val displayName = authTask.result?.user?.email?.split('@')?.get(0)
                         val instituteId = generateInstituteId()
 
-                        // Create the institute record
                         val institute = mapOf(
                             "instituteId" to instituteId,
                             "email" to email
                         )
 
-                        // Store the institute record in Firestore
                         firestore.collection("institutes").document(instituteId).set(institute)
                             .addOnCompleteListener { firestoreTask ->
                                 if (firestoreTask.isSuccessful) {
                                     Log.d("FB", "Institute registered successfully")
-                                    createInstitute(displayName, instituteId)  // Create the institute in Firestore
-                                    home()  // Navigate to home
+                                    createInstitute(displayName, instituteId)
+                                    home()
                                 } else {
                                     Log.d("FB", "Firestore registration failed: ${firestoreTask.exception?.message}")
                                 }
@@ -147,12 +158,10 @@ class LoginScreenViewModel : ViewModel() {
         }
     }
 
-    // Utility function to generate a unique Institute ID
     private fun generateInstituteId(): String {
         return "INST${System.currentTimeMillis()}"
     }
 
-    // Validate that the student's institute ID matches during login
     private fun validateStudentInstitute(instituteId: String, home: () -> Unit) {
         val userId = auth.currentUser?.uid
         firestore.collection("users")
@@ -171,22 +180,31 @@ class LoginScreenViewModel : ViewModel() {
             }
     }
 
-    // Create a student record in Firestore
     private fun createStudent(displayName: String?, instituteId: String) {
         val userId = auth.currentUser?.uid
         if (displayName != null && userId != null) {
             val student = MUser(
                 userId = userId,
                 displayName = displayName,
-                avatarUrl = "",  //  set this later if the student has an avatar
+                avatarUrl = "",
                 quote = "Learning every day",
                 profession = "Student",
-                id = instituteId // Associate the student with the institute ID
-            ).toMap()
+                id = instituteId
+            ).toMap().toMutableMap()
 
-            firestore.collection("students").add(student)
+            student["role"] = "student"
+
+            firestore.collection("users").document(userId).set(student)
                 .addOnSuccessListener {
-                    Log.d("FB", "Student created successfully")
+                    Log.d("FB", "Student created successfully with role")
+                    // Confirm document existence
+                    firestore.collection("users").document(userId).get().addOnSuccessListener { doc ->
+                        if (doc.exists()) {
+                            Log.d("FB", "Document data: ${doc.data}")
+                        } else {
+                            Log.d("FB", "Document does not exist after creation")
+                        }
+                    }
                 }
                 .addOnFailureListener { exception ->
                     Log.d("FB", "Error creating student: ${exception.message}")
@@ -196,18 +214,26 @@ class LoginScreenViewModel : ViewModel() {
         }
     }
 
-    // Create an institute record in Firestore
+
     private fun createInstitute(displayName: String?, instituteId: String) {
-        val institute = mapOf(
-            "instituteId" to instituteId,
-            "name" to displayName
-        )
-        firestore.collection("institutes").document(instituteId).set(institute)
-            .addOnSuccessListener {
-                Log.d("FB", "Institute created successfully")
-            }
-            .addOnFailureListener { exception ->
-                Log.d("FB", "Error creating institute: ${exception.message}")
-            }
+        val userId = auth.currentUser?.uid
+        if (displayName != null && userId != null) {
+            val institute = mapOf(
+                "userId" to userId,
+                "instituteId" to instituteId,
+                "name" to displayName,
+                "role" to "institute"
+            )
+
+            firestore.collection("users").document(userId).set(institute)
+                .addOnSuccessListener {
+                    Log.d("FB", "Institute created successfully with role")
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("FB", "Error creating institute: ${exception.message}")
+                }
+        } else {
+            Log.d("FB", "Display name or user ID is null")
+        }
     }
 }

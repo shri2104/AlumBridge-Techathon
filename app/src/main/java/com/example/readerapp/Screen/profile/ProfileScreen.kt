@@ -14,7 +14,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.readerapp.Navigation.ReaderScreens
 import com.example.readerapp.viewmodel.ProfileViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,14 +41,11 @@ fun ProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // Title
         Text(
             text = "Profile",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
-
-        // Profile Fields
         ProfileField(
             label = "Name",
             value = name,
@@ -99,10 +98,9 @@ fun ProfileScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Log Out Button
         Button(
-            onClick = { navController.popBackStack() },
+            onClick = { FirebaseAuth.getInstance().signOut()
+                navController.navigate(ReaderScreens.LoginScreen.name) },
             colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
             modifier = Modifier.fillMaxWidth()
         ) {

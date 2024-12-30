@@ -100,7 +100,7 @@ fun RLoginScreen(
                     }
                 } else {
                     if (showLoginForm.value) {
-                        // Sign-in or register as an institute
+
                         viewModel.signInWithEmailAndPassword(email, password, "institute") {
                             navController.navigate(ReaderScreens.InstituteHomeScreen.name)
                         }
