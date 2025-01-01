@@ -15,6 +15,7 @@ fun AddJobScreen(navController: NavController, insertJob: (JobPosting) -> Unit) 
     var company by remember { mutableStateOf("") }
     var role by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    var applyLink by remember { mutableStateOf("") }  // Add state for apply link
 
     Scaffold(
         topBar = {
@@ -84,6 +85,7 @@ fun AddJobScreen(navController: NavController, insertJob: (JobPosting) -> Unit) 
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                // Job Description Field
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
@@ -98,11 +100,34 @@ fun AddJobScreen(navController: NavController, insertJob: (JobPosting) -> Unit) 
                     maxLines = 5
                 )
 
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Apply Link Field
+                OutlinedTextField(
+                    value = applyLink,
+                    onValueChange = { applyLink = it },
+                    label = { Text("Apply Link") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                        focusedLabelColor = MaterialTheme.colorScheme.primary
+                    ),
+                    singleLine = true
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
                     onClick = {
-                        insertJob(JobPosting(title = title, company = company, role = role, description = description))
+                        insertJob(JobPosting(
+                            title = title,
+                            company = company,
+                            role = role,
+                            description = description,
+                            applyLink = applyLink // Pass the applyLink here
+                        ))
                         navController.popBackStack()
                     },
                     modifier = Modifier.fillMaxWidth().height(50.dp),

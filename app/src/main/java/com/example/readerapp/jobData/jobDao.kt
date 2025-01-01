@@ -9,7 +9,8 @@ data class JobPosting(
     val title: String,
     val company: String,
     val role: String,
-    val description: String
+    val description: String,
+    val applyLink: String
 )
 
 @Dao

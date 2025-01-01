@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -27,11 +29,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.readerapp.Navigation.ReaderScreens
+import com.example.readerapp.donationdata.TotalDonationViewModel
+import com.example.readerapp.viewmodel.JobViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InstituteDashBoard(navController: NavController) {
+fun InstituteDashBoard(navController: NavController,
+                       jobViewModel: JobViewModel,
+                       totalDonationViewModel: TotalDonationViewModel
+) {
+    val totalJobs by jobViewModel.totalJobCount.collectAsState()
+
+    // Fetch the total donations (sum of donation amounts)
+    val donations = totalDonationViewModel.allTotalDonations.collectAsState(initial = emptyList())
+    val totalDonationAmount = donations.value.sumOf { it.amount }.toString()
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -91,13 +104,14 @@ fun InstituteDashBoard(navController: NavController) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     StatisticsCard("Alumni", "0", Icons.Filled.Group)
-                    StatisticsCard("Jobs", "0", Icons.Filled.Work)
-                    StatisticsCard("Donations", "$0", Icons.Filled.Favorite)
+                    StatisticsCard("Jobs", totalJobs.toString(), Icons.Filled.Work) // Display total jobs
+                    StatisticsCard("Donations", "₹$totalDonationAmount", Icons.Filled.Favorite) // Display total donation amount
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun StatisticsCard(label: String, value: String, icon: ImageVector) {
@@ -160,10 +174,4 @@ fun BottomInstituteNavigationBar(navController: NavController) {
             label = { Text("Directory") }
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewInstituteDashboard() {
-    InstituteDashBoard(navController = NavController(LocalContext.current))
 }

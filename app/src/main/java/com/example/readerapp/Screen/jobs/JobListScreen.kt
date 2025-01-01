@@ -1,5 +1,6 @@
-package com.example.readerapp.Screen.jobs
-
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,20 +10,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.readerapp.jobData.JobPosting
 import com.example.readerapp.viewmodel.JobViewModel
-import kotlinx.coroutines.Job
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JobListScreen(navController: NavController, viewModel: JobViewModel) {
-    // Use jobList, not jobPostings
     val jobs = viewModel.jobList.collectAsState().value
 
     Scaffold(
@@ -68,9 +65,9 @@ fun JobListScreen(navController: NavController, viewModel: JobViewModel) {
         }
     )
 }
-
 @Composable
 fun JobCard(job: JobPosting) {
+    val context = LocalContext.current
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shadowElevation = 8.dp,
@@ -99,6 +96,22 @@ fun JobCard(job: JobPosting) {
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
+
+            // Apply Button
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = { openApplyLink(job.applyLink,context) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Text("Apply Now", color = MaterialTheme.colorScheme.onPrimary)
+            }
         }
     }
+}
+
+fun openApplyLink(url: String, context: Context) {
+    val context = context
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    context.startActivity(intent)
 }

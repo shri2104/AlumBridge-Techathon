@@ -34,6 +34,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.shadow
 
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -42,7 +44,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.Navigation
 import com.example.readerapp.Navigation.ReaderScreens
-
+import com.example.readerapp.donationdata.TotalDonationViewModel
+import com.example.readerapp.viewmodel.JobViewModel
 
 
 @AndroidEntryPoint
@@ -74,7 +77,13 @@ fun ReaderApp() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RHomeScreen(navController: NavHostController) {
+fun RHomeScreen(navController: NavHostController,
+                jobViewModel: JobViewModel,
+                totalDonationViewModel: TotalDonationViewModel
+) {
+    val totalJobs by jobViewModel.totalJobCount.collectAsState()
+    val donations = totalDonationViewModel.allTotalDonations.collectAsState(initial = emptyList())
+    val totalDonationAmount = donations.value.sumOf { it.amount }.toString()
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -136,8 +145,8 @@ fun RHomeScreen(navController: NavHostController) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     StatisticsCard("Students", "0", Icons.Filled.Group)
-                    StatisticsCard("Jobs", "0", Icons.Filled.Work)
-                    StatisticsCard("Donations", "$0", Icons.Filled.Favorite)
+                    StatisticsCard("Jobs", totalJobs.toString(), Icons.Filled.Work)
+                    StatisticsCard("Donations", "₹$totalDonationAmount", Icons.Filled.Favorite)
                 }
             }
         }

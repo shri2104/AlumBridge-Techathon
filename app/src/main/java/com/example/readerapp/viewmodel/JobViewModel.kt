@@ -6,7 +6,10 @@ import com.example.readerapp.jobData.JobPosting
 import com.example.readerapp.jobData.jobRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,7 +18,11 @@ class JobViewModel @Inject constructor(private val repo: jobRepo) : ViewModel() 
 
     private val _jobList = MutableStateFlow<List<JobPosting>>(emptyList())
     val jobList: StateFlow<List<JobPosting>> get() = _jobList
-
+    val totalJobCount: StateFlow<Int> = _jobList.map { it.size }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        0
+    )
     init {
         fetchJobs()
     }

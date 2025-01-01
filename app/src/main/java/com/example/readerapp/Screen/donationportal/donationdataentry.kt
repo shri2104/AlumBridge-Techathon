@@ -5,10 +5,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bungalow
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Numbers
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -34,8 +41,6 @@ fun DonationInputScreen(
     var bankName by remember { mutableStateOf(TextFieldValue()) }
     var accountNumber by remember { mutableStateOf(TextFieldValue()) }
     var ifscCode by remember { mutableStateOf(TextFieldValue()) }
-
-    // Derived state to check if all fields are filled
     val isButtonEnabled = accountHolderName.text.isNotBlank() &&
             bankName.text.isNotBlank() &&
             accountNumber.text.isNotBlank() &&
@@ -57,30 +62,42 @@ fun DonationInputScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                InputField(
+                Image(
+                    painter = painterResource(id = R.drawable.bank), // Replace with your image resource
+                    contentDescription = "Image",
+                    modifier = Modifier
+                        .size(200.dp)
+                        .padding(bottom = 24.dp)
+                )
+                InputFieldWithIcon(
                     label = "Account Holder Name",
                     value = accountHolderName,
-                    onValueChange = { accountHolderName = it }
+                    onValueChange = { accountHolderName = it },
+                    icon = Icons.Filled.Person
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                InputField(
+                InputFieldWithIcon(
                     label = "Bank Name",
                     value = bankName,
-                    onValueChange = { bankName = it }
+                    onValueChange = { bankName = it },
+                    icon = Icons.Filled.Bungalow
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                InputField(
+                InputFieldWithIcon(
                     label = "Account Number",
                     value = accountNumber,
-                    onValueChange = { accountNumber = it }
+                    onValueChange = { accountNumber = it },
+                    icon = Icons.Filled.Numbers
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                InputField(
+                InputFieldWithIcon(
                     label = "IFSC Code",
                     value = ifscCode,
-                    onValueChange = { ifscCode = it }
+                    onValueChange = { ifscCode = it },
+                    icon = Icons.Filled.Code
                 )
                 Spacer(modifier = Modifier.height(32.dp))
+
                 Button(
                     onClick = {
                         donationViewModel.saveDonation(
@@ -100,26 +117,28 @@ fun DonationInputScreen(
         }
     )
 }
-
 @Composable
-fun InputField(
+fun InputFieldWithIcon(
     label: String,
     value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit
+    onValueChange: (TextFieldValue) -> Unit,
+    icon: ImageVector
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(text = label, fontSize = 14.sp, color = MaterialTheme.colors.onBackground)
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colors.primary)
-                .padding(8.dp),
-            singleLine = true
-        )
-    }
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        leadingIcon = {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+        },
+        modifier = Modifier.fillMaxWidth()
+    )
 }
+
 
 @Composable
 fun BankDetailsScreenForInstitute(
@@ -143,7 +162,7 @@ fun BankDetailsScreenForInstitute(
                 .padding(paddingValues)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.spacedBy(16.dp) // Space between items
         ) {
             Image(
                 painter = painterResource(id = R.drawable.bank),
@@ -154,6 +173,7 @@ fun BankDetailsScreenForInstitute(
                     .height(200.dp)
                     .padding(8.dp)
             )
+
             Column(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier.fillMaxWidth()
@@ -182,17 +202,38 @@ fun BankDetailsScreenForInstitute(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = { navController.navigate(ReaderScreens.DonationInfoEntry.name) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 32.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF03DAC5))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp) // Space between buttons
             ) {
-                Text("Update Bank Details", color = Color.White)
+                Button(
+                    onClick = { navController.navigate(ReaderScreens.DonationInfoEntry.name) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF03DAC5))
+                ) {
+                    Text("Update Bank Details", color = Color.White)
+                }
+                Button(
+                    onClick = { navController.navigate(ReaderScreens.DonationList.name) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF03DAC5))
+                ) {
+                    Text("Donations", color = Color.White)
+                }
+                Button(
+                    onClick = { navController.navigate(ReaderScreens.totalDonation.name) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF03DAC5))
+                ) {
+                    Text("Enter Donation", color = Color.White)
+                }
+                Button(
+                    onClick = { navController.navigate(ReaderScreens.newdonations.name) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF03DAC5))
+                ) {
+                    Text("New Donations", color = Color.White)
+                }
             }
         }
     }

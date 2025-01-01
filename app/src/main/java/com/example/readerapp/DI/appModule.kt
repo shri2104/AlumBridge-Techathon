@@ -2,10 +2,14 @@ package com.example.readerapp.DI
 
 import android.content.Context
 import androidx.room.Room
+import com.example.readerapp.Donationdata2.TotalDonationDao
+import com.example.readerapp.Donationdata3.StudentDonationDao
+import com.example.readerapp.Donationdata3.StudentDonationDatabase
 import com.example.readerapp.ProfileData.ProfileDao
 import com.example.readerapp.ProfileData.ProfileDatabase
 import com.example.readerapp.donationdata.DonationDao
 import com.example.readerapp.donationdata.DonationDatabase
+import com.example.readerapp.donationdata.TotalDonationDatabase
 import com.example.readerapp.jobData.JobDao
 import com.example.readerapp.jobData.JobDatabase
 import com.example.readerapp.jobData.jobRepo
@@ -64,4 +68,25 @@ object AppModule {
     @Singleton
     @Provides
     fun provideEventDao(eventDatabase: EventDatabase): EventDao = eventDatabase.eventDao()
+
+    @Singleton
+    @Provides
+    fun provideTotalDonationDatabase(context: Context): TotalDonationDatabase =
+        Room.databaseBuilder(context, TotalDonationDatabase::class.java, "total_donation_database").build()
+
+    @Singleton
+    @Provides
+    fun provideTotalDonationDao(totalDonationDatabase: TotalDonationDatabase): TotalDonationDao =
+        totalDonationDatabase.totalDonationDao()
+
+    @Singleton
+    @Provides
+    fun provideStudentDonationDatabase(context: Context): StudentDonationDatabase =
+        Room.databaseBuilder(context, StudentDonationDatabase::class.java, "student_donation_database").build()
+
+    @Singleton
+    @Provides
+    fun provideStudentDonationDao(studentDonationDatabase: StudentDonationDatabase): StudentDonationDao =
+        studentDonationDatabase.studentDonationDao()
+
 }
