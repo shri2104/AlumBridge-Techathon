@@ -100,7 +100,6 @@ fun RLoginScreen(
                     }
                 } else {
                     if (showLoginForm.value) {
-
                         viewModel.signInWithEmailAndPassword(email, password, "institute") {
                             navController.navigate(ReaderScreens.InstituteHomeScreen.name)
                         }
@@ -113,9 +112,7 @@ fun RLoginScreen(
                 }
             }
 
-            // Toggle between login and register
             Spacer(modifier = Modifier.height(20.dp))
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -142,8 +139,6 @@ fun RLoginScreen(
         }
     }
 }
-
-
 @Composable
 fun UserForm(
     loading: Boolean = false,
@@ -275,6 +270,7 @@ fun SubmitButton(
     validInputs: Boolean,
     onClick: () -> Unit
 ) {
+
     Button(
         onClick = onClick,
         modifier = Modifier

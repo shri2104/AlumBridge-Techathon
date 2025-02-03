@@ -18,26 +18,21 @@ class DonationViewModel @Inject constructor(private val dao: DonationDao) : View
 
     private val _donation = MutableStateFlow<Donation?>(null)
     val donation: StateFlow<Donation?> = _donation
-
     init {
         fetchDonation()
     }
-
     private fun fetchDonation() {
         viewModelScope.launch {
             val fetchedDonation = dao.getDonation()
             _donation.value = fetchedDonation
         }
     }
-
     fun saveDonation(accountHolderName: String, bankName: String, accountNumber: String, ifscCode: String) {
         viewModelScope.launch {
             val currentDonation = _donation.value
             if (currentDonation == null) {
-                // Insert new donation data
                 dao.insertDonation(Donation(accountHolderName = accountHolderName, bankName = bankName, accountNumber = accountNumber, ifscCode = ifscCode))
             } else {
-                // Update existing donation data
                 val updatedDonation = currentDonation.copy(
                     accountHolderName = accountHolderName,
                     bankName = bankName,

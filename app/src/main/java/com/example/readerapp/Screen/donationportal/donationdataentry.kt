@@ -162,7 +162,7 @@ fun BankDetailsScreenForInstitute(
                 .padding(paddingValues)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp) // Space between items
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.bank),
@@ -228,7 +228,7 @@ fun BankDetailsScreenForInstitute(
                     Text("Enter Donation", color = Color.White)
                 }
                 Button(
-                    onClick = { navController.navigate(ReaderScreens.newdonations.name) },
+                    onClick = { navController.navigate(ReaderScreens.RecievedDonations.name) },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF03DAC5))
                 ) {

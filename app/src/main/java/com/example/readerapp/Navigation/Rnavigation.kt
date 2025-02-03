@@ -13,7 +13,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.readerapp.Donationdata3.StudentDonationViewModel
 import com.example.readerapp.viewmodel.JobViewModel
 import com.example.readerapp.RHomeScreen
+import com.example.readerapp.Retrofit.ApiService
 import com.example.readerapp.Screen.Directory.DisplayNamesScreen
+import com.example.readerapp.Screen.EventsandReunion.EventDataForm
+import com.example.readerapp.Screen.EventsandReunion.EventListScreen
 import com.example.readerapp.Screen.EventsandReunion.PostedEventsScreen
 import com.example.readerapp.Screen.Institute.InstituteDashBoard
 import com.example.readerapp.Screen.Login.RLoginScreen
@@ -36,7 +39,7 @@ import com.example.readerapp.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun RNavigation() {
+fun RNavigation(apiService: ApiService) {
     val context = LocalContext.current
     val navController = rememberNavController()
     val JobViewModel: JobViewModel = hiltViewModel()
@@ -61,6 +64,15 @@ fun RNavigation() {
         }
         composable(ReaderScreens.AddJobScreen.name) {
             AddJobScreen(navController) { JobViewModel.addJob(it) }
+        }
+        composable("Eventpost"){
+            EventDataForm(
+                navController = navController,
+                apiService
+            )
+        }
+        composable("postedEvents"){
+            EventListScreen(apiService)
         }
         composable(ReaderScreens.JobListScreen.name) {
             JobListScreen(navController = navController, JobViewModel)
@@ -132,7 +144,7 @@ fun RNavigation() {
         composable(ReaderScreens.Thankyouscreen.name) {
             ThankYouScreen(navController = navController)
         }
-        composable(ReaderScreens.DonationPortal2.name) {
+        composable(ReaderScreens.RecievedDonations.name) {
             StudentDonationListScreen(
                 navController = navController,
                 donationViewModel = studentdonationviewmodel,

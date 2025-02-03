@@ -37,13 +37,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.shadow
-
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.Navigation
 import com.example.readerapp.Navigation.ReaderScreens
+import com.example.readerapp.Retrofit.createApiservice
 import com.example.readerapp.donationdata.TotalDonationViewModel
 import com.example.readerapp.viewmodel.JobViewModel
 
@@ -52,28 +51,30 @@ import com.example.readerapp.viewmodel.JobViewModel
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val apiService = createApiservice()
         enableEdgeToEdge()
+
         setContent {
             ReaderAppTheme {
-                RNavigation()
+                RNavigation(apiService)
             }
         }
     }
 }
 
 
-@Composable
-fun ReaderApp() {
-    Surface(color=MaterialTheme.colorScheme.background,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 46.dp)) {
-        Column(verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
-            RNavigation()
-        }
-    }
-}
+//@Composable
+//fun ReaderApp() {
+//    Surface(color=MaterialTheme.colorScheme.background,
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .padding(top = 46.dp)) {
+//        Column(verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally) {
+//            RNavigation(apiService)
+//        }
+//    }
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -187,11 +188,11 @@ fun StatisticsCard(label: String, value: String, icon: ImageVector) {
 fun BottomNavigationBar(navController: NavHostController) {
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.primary,
-        tonalElevation = 8.dp // Apply tonal elevation for shadow
+        tonalElevation = 8.dp
     ) {
         NavigationBarItem(
             selected = false,
-            onClick = {navController.navigate(ReaderScreens.postedEvents.name)   },
+            onClick = {navController.navigate("postedEvents")   },
             icon = { Icon(Icons.Filled.Event, contentDescription = "Events & Reunions") },
             label = { Text("Events") }
         )

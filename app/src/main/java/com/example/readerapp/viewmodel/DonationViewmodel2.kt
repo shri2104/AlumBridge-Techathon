@@ -12,7 +12,6 @@ import javax.inject.Inject
 class TotalDonationViewModel @Inject constructor(
     private val totalDonationDao: TotalDonationDao
 ) : ViewModel() {
-
     fun addTotalDonation(amount: Double, donorName: String = "", batchof: Int) {
         viewModelScope.launch {
             val totalDonation = TotalDonation(
@@ -23,6 +22,5 @@ class TotalDonationViewModel @Inject constructor(
             totalDonationDao.insertTotalDonation(totalDonation)
         }
     }
-
     val allTotalDonations = totalDonationDao.getAllTotalDonations()
 }

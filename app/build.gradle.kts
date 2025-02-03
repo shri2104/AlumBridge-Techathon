@@ -107,6 +107,9 @@ dependencies {
     // Other Lifecycle components
     implementation(libs.androidx.lifecycle.runtime.ktx.v251)
 
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation (libs.androidx.material3.v120)

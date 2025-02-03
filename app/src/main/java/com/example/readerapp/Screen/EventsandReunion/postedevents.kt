@@ -50,16 +50,13 @@ fun PostedEventsScreen(eventViewModel: EventViewModel, navController: NavHostCon
             Box(modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)) {
-
                 Image(
                     painter = painterResource(id = R.drawable.jason_leung_xaanw0s0pmk_unsplash),
                     contentDescription = "Background Image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
-
                 if (events.isEmpty()) {
-                    // Show a message if no events are available
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -89,7 +86,7 @@ fun PostedEventsScreen(eventViewModel: EventViewModel, navController: NavHostCon
                                 color = Color.Black
                             )
                         }
-                        items(events.takeLast(3)) { event ->  // Reversed order for latest events
+                        items(events.takeLast(3)) { event ->
                             EventItem(event)
                         }
                         item {
@@ -173,8 +170,6 @@ fun EventItem(event: Event) {
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-
-            // Event Type
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
                 Icon(
                     imageVector = Icons.Filled.Timeline,

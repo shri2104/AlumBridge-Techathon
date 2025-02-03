@@ -32,7 +32,6 @@ class LoginScreenViewModel : ViewModel() {
                 _userDocumentExists.value = false
             }
     }
-
     fun signInStudent(
         email: String,
         password: String,
@@ -70,7 +69,7 @@ class LoginScreenViewModel : ViewModel() {
                                 createStudent(displayName, instituteId)
                                 home()
                             } else {
-                                Log.d("FB", "Student registration failed: ${task.exception?.message}")
+                                Log.d("FB", "Registration failed: ${task.exception?.message}")
                             }
                             _loading.value = false
                         }
@@ -112,6 +111,7 @@ class LoginScreenViewModel : ViewModel() {
                 callback(false)
             }
     }
+
 //    private val _displayNames = MutableLiveData<List<String>>()
 //    val displayNames: LiveData<List<String>> = _displayNames
 //
@@ -128,6 +128,7 @@ class LoginScreenViewModel : ViewModel() {
 //                Log.d("FB", "Error fetching display names: ${exception.message}")
 //            }
 //    }
+
     fun registerInstitute(
         email: String,
         password: String,
@@ -157,19 +158,13 @@ class LoginScreenViewModel : ViewModel() {
                                 }
                                 _loading.value = false
                             }
-                            .addOnFailureListener { exception ->
-                                Log.d("FB", "Firestore error: ${exception.message}")
-                                _loading.value = false
-                            }
+
                     } else {
                         Log.d("FB", "Firebase Auth registration failed: ${authTask.exception?.message}")
                         _loading.value = false
                     }
                 }
-                .addOnFailureListener { exception ->
-                    Log.d("FB", "Firebase Auth error: ${exception.message}")
-                    _loading.value = false
-                }
+
         }
     }
 
@@ -177,8 +172,13 @@ class LoginScreenViewModel : ViewModel() {
         return "INST${System.currentTimeMillis()}"
     }
 
+
     private fun validateStudentInstitute(instituteId: String, home: () -> Unit) {
-        val userId = auth.currentUser?.uid
+        val userId = auth.currentUser?.uid ?: run {
+            Log.d("FB", "User not authenticated.")
+            return
+        }
+
         firestore.collection("users")
             .whereEqualTo("userId", userId)
             .whereEqualTo("instituteId", instituteId)
@@ -190,14 +190,16 @@ class LoginScreenViewModel : ViewModel() {
                     Log.d("FB", "Invalid Institute ID for student.")
                 }
             }
-            .addOnFailureListener {
-                Log.d("FB", "Error validating student: ${it.message}")
+            .addOnFailureListener { exception ->
+                Log.d("FB", "Error validating student institute: ${exception.message}")
             }
     }
 
+
     private fun createStudent(displayName: String?, instituteId: String) {
-        val userId = auth.currentUser?.uid
-        if (displayName != null && userId != null) {
+        val userId = auth.currentUser?.uid ?: return
+
+        if (displayName != null) {
             val student = MUser(
                 userId = userId,
                 displayName = displayName,
@@ -220,9 +222,8 @@ class LoginScreenViewModel : ViewModel() {
                             Log.d("FB", "Document does not exist after creation")
                         }
                     }
-                }
-                .addOnFailureListener { exception ->
-                    Log.d("FB", "Error creating student: ${exception.message}")
+                }.addOnFailureListener { exception ->
+                    Log.d("FB", "Error creating student document: ${exception.message}")
                 }
         } else {
             Log.d("FB", "Display name or user ID is null")

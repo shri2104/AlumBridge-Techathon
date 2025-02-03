@@ -2,11 +2,8 @@ package com.example.readerapp.viewmodel
 
 import com.example.readerapp.eventdata.Event
 import com.example.readerapp.eventdata.EventDao
-
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,21 +12,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EventViewModel @Inject constructor(private val dao: EventDao) : ViewModel() {
-
     private val _events = MutableStateFlow<List<Event>>(emptyList())
     val events: StateFlow<List<Event>> = _events
-
     init {
         fetchEvents()
     }
-
     private fun fetchEvents() {
         viewModelScope.launch {
             val fetchedEvents = dao.getEvents()
             _events.value = fetchedEvents
         }
     }
-
     fun saveEvent(
         eventHeadline: String,
         eventDescription: String,
@@ -49,7 +42,6 @@ class EventViewModel @Inject constructor(private val dao: EventDao) : ViewModel(
             fetchEvents()
         }
     }
-
     fun updateEvent(event: Event) {
         viewModelScope.launch {
             dao.updateEvent(event)
@@ -57,3 +49,4 @@ class EventViewModel @Inject constructor(private val dao: EventDao) : ViewModel(
         }
     }
 }
+

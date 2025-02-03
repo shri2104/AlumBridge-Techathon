@@ -69,7 +69,6 @@ fun TDonationInputScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Donor Name Input
             Text(text = "Donor Name", style = MaterialTheme.typography.bodyLarge)
             OutlinedTextField(
                 value = donorName,

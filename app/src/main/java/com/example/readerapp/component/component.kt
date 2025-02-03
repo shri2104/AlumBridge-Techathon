@@ -3,21 +3,30 @@ package com.example.readerapp.component
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -79,8 +88,6 @@ fun InputField(
             keyboardActions = onAction,
             isError = isError
         )
-
-        // Display error message if the email is invalid
         if (isError) {
             Text(
                 text = errorMessage,
@@ -102,11 +109,8 @@ fun PasswordInput(
     imeAction: ImeAction = ImeAction.Done,
     onAction: KeyboardActions = KeyboardActions.Default,
 ) {
-
-    // Toggle between plain text and hidden password
     val visualTransformation = if (passwordVisibility.value) VisualTransformation.None else
-        PasswordVisualTransformation()  // Hides the password
-
+        PasswordVisualTransformation()
     OutlinedTextField(
         value = passwordState.value,
         onValueChange = {
@@ -123,9 +127,9 @@ fun PasswordInput(
             keyboardType = KeyboardType.Password,
             imeAction = imeAction
         ),
-        visualTransformation = visualTransformation,  // Apply transformation based on visibility
+        visualTransformation = visualTransformation,
         trailingIcon = {
-            PasswordVisibility(passwordVisibility = passwordVisibility) // Toggle password visibility
+            PasswordVisibility(passwordVisibility = passwordVisibility)
         },
         keyboardActions = onAction
     )
@@ -133,14 +137,40 @@ fun PasswordInput(
 
 @Composable
 fun PasswordVisibility(passwordVisibility: MutableState<Boolean>) {
-    // Toggle visibility icon (eye icon)
     val icon = if (passwordVisibility.value) {
-        Icons.Default.Visibility  // Show password icon
+        Icons.Default.Visibility
     } else {
-        Icons.Default.VisibilityOff  // Hide password icon
+        Icons.Default.VisibilityOff
     }
 
     IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
         Icon(imageVector = icon, contentDescription = "Toggle Password Visibility")
+    }
+}
+
+@Composable
+fun InputFields(placeholder: String) {
+    var inputData by remember { mutableStateOf("") }
+
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)
+    ) {
+        TextField(
+            value = inputData,
+            onValueChange = { inputData = it },
+            placeholder = { Text(text = placeholder) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.colors(
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                cursorColor = Color.Blue,
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White
+            )
+        )
     }
 }

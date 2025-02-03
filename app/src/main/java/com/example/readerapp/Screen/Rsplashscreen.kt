@@ -25,13 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.readerapp.Navigation.ReaderScreens
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 
 @Composable
@@ -48,37 +44,8 @@ fun RSplashScreen(navController: NavController) {
             )
         )
         delay(2000L)
-
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            val firestore = FirebaseFirestore.getInstance()
-            firestore.collection("users")
-                .document(user.uid)
-                .get()
-                .addOnSuccessListener { document ->
-                    if (document.exists()) {
-                        val userType = document.getString("role")
-                        if (userType == "student") {
-                            navController.navigate(ReaderScreens.ReaderHomeScreen.name)
-                        } else if (userType == "institute") {
-                            navController.navigate(ReaderScreens.InstituteHomeScreen.name)
-                        } else {
-                            navController.navigate(ReaderScreens.LoginScreen.name)
-                        }
-                    } else {
-                        Log.d("FB", "User document does not exist")
-                        navController.navigate(ReaderScreens.LoginScreen.name)
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Log.d("FB", "Error fetching user role: ${exception.message}")
-                    navController.navigate(ReaderScreens.LoginScreen.name)
-                }
-        } else {
-            navController.navigate(ReaderScreens.LoginScreen.name)
-        }
+        navController.navigate(ReaderScreens.InstituteHomeScreen.name)
     }
-
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
