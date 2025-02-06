@@ -1,14 +1,11 @@
 package com.example.readerapp.Screen.donationportal
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bungalow
 import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Numbers
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
@@ -20,23 +17,26 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.readerapp.Navigation.ReaderScreens
 import com.example.readerapp.R
+import com.example.readerapp.Retrofit.ApiService
+import com.example.readerapp.Retrofit.DonationData
 import com.example.readerapp.viewmodel.DonationViewModel
-import com.example.readerapp.viewmodel.ProfileViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun DonationInputScreen(
     donationViewModel: DonationViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    apiService: ApiService
 ) {
+    val coroutineScope = rememberCoroutineScope()
     var accountHolderName by remember { mutableStateOf(TextFieldValue()) }
     var bankName by remember { mutableStateOf(TextFieldValue()) }
     var accountNumber by remember { mutableStateOf(TextFieldValue()) }
@@ -106,6 +106,19 @@ fun DonationInputScreen(
                             accountNumber.text,
                             ifscCode.text
                         )
+                        val donationdata = DonationData(
+                            AccountHolderName = accountHolderName.toString(),
+                            BankName = bankName.toString(),
+                            AccountNumber = accountNumber.toString(),
+                            IFSCcode = ifscCode.toString(),
+                        )
+                        coroutineScope.launch(Dispatchers.IO) {
+                            try {
+                                apiService.StoreDonationdata(donationdata)
+                            }
+                            catch (e: Exception) {
+                            }
+                        }
                         navController.popBackStack()
                     },
                     enabled = isButtonEnabled,

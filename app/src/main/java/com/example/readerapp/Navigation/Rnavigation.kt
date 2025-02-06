@@ -31,7 +31,6 @@ import com.example.readerapp.Screen.donationportal.StudentDonationListScreen
 import com.example.readerapp.Screen.donationportal.TDonationInputScreen
 import com.example.readerapp.Screen.donationportal.ThankYouScreen
 import com.example.readerapp.Screen.jobs.AddJobScreen
-import com.example.readerapp.Screen.profile.ProfileScreen
 import com.example.readerapp.donationdata.TotalDonationViewModel
 import com.example.readerapp.viewmodel.DonationViewModel
 import com.example.readerapp.viewmodel.EventViewModel
@@ -71,7 +70,7 @@ fun RNavigation(apiService: ApiService) {
                 apiService
             )
         }
-        composable("postedEvents"){
+        composable("postedEvent"){
             EventListScreen(apiService)
         }
         composable(ReaderScreens.JobListScreen.name) {
@@ -79,7 +78,7 @@ fun RNavigation(apiService: ApiService) {
         }
         composable(ReaderScreens.DonationPortal.name) {
             BankDetailsScreen(navController = navController,
-                donationViewModel = Donationviewmodel)
+                donationViewModel = Donationviewmodel,apiService)
         }
         composable(ReaderScreens.DonationPortal2.name) {
             DonationSubmissionScreen(
@@ -89,7 +88,10 @@ fun RNavigation(apiService: ApiService) {
             )
         }
         composable(ReaderScreens.ProfileScreen.name) {
-            ProfileScreen(navController = navController,viewModel = ProfileViewModel)
+            EventDataForm(
+                navController = navController,
+                apiService = apiService,
+            )
         }
         composable(ReaderScreens.InstituteHomeScreen.name) {
             InstituteDashBoard(
@@ -110,7 +112,8 @@ fun RNavigation(apiService: ApiService) {
         composable(ReaderScreens.DonationInfoEntry.name) {
             DonationInputScreen(
                 navController = navController,
-                donationViewModel = Donationviewmodel
+                donationViewModel = Donationviewmodel,
+                apiService = apiService
             )
         }
         composable(ReaderScreens.DonationInfo.name) {
@@ -149,7 +152,7 @@ fun RNavigation(apiService: ApiService) {
                 navController = navController,
                 donationViewModel = studentdonationviewmodel,
 
-            )
+                )
         }
     }
 }

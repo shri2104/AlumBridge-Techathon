@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,25 +16,25 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.readerapp.Donationdata3.StudentDonationViewModel
 import com.example.readerapp.Navigation.ReaderScreens
 import com.example.readerapp.R
+import com.example.readerapp.Retrofit.ApiService
+import com.example.readerapp.Retrofit.EventData
 import com.example.readerapp.viewmodel.DonationViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun BankDetailsScreen(
     navController: NavController,
-    donationViewModel: DonationViewModel
+    donationViewModel: DonationViewModel,
+    apiService: ApiService
+
 ) {
     val donationState by donationViewModel.donation.collectAsState()
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -79,33 +77,32 @@ fun BankDetailsScreen(
                     elevation = 4.dp
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        if (donationState != null) {
+                        if (donationState!=null){
                             val donation = donationState!!
                             Text("Account Holder: ${donation.accountHolderName}", fontSize = 16.sp)
                             Text("Bank Name: ${donation.bankName}", fontSize = 16.sp)
                             Text("Account Number: ${donation.accountNumber}", fontSize = 16.sp)
                             Text("IFSC Code: ${donation.ifscCode}", fontSize = 16.sp)
-                        } else {
+
+                        }
+                        else {
                             Text("No donation details available.", fontSize = 16.sp, color = Color.Red)
                         }
                     }
                 }
             }
-
             Spacer(modifier = Modifier.height(32.dp))
-
             Button(
-                onClick = {navController.navigate(ReaderScreens.DonationListforstudent.name) },
-                modifier = Modifier
+                onClick ={navController.navigate(ReaderScreens.DonationListforstudent.name) },
+                modifier =Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
             ) {
                 Text("Donations", color = Color.White)
             }
-
             Button(
-                onClick = { navController.navigate(ReaderScreens.DonationPortal2.name) },
+                onClick = {navController.navigate(ReaderScreens.DonationPortal2.name) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 32.dp),
@@ -155,8 +152,6 @@ fun DonationSubmissionScreen(
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
-
-            // Name Input
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -180,13 +175,10 @@ fun DonationSubmissionScreen(
                 label = { Text("Reference ID") },
                 modifier = Modifier.fillMaxWidth()
             )
-
             Spacer(modifier = Modifier.height(16.dp))
-
             Button(
                 onClick = {
                     if (amount.isNotEmpty() && name.isNotEmpty() && batch.isNotEmpty() && referenceId.isNotEmpty()) {
-                        // Insert donation into database
                         donationViewModel.addStudentDonation(
                             amount = amount.toDouble(),
                             donorName = name,
@@ -195,7 +187,6 @@ fun DonationSubmissionScreen(
                         )
 
                         Toast.makeText(context, "Donation Submitted Successfully!", Toast.LENGTH_SHORT).show()
-
                         navController.navigate(ReaderScreens.Thankyouscreen.name)
                     }
                 },
