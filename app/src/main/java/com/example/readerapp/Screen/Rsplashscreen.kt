@@ -80,6 +80,7 @@ fun RSplashScreen(navController: NavController) {
         }
     }
 }
+
 @Composable
 fun logo(modifier: Modifier = Modifier) {
     Text(

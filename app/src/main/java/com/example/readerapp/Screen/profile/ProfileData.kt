@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventDataForm(navController: NavController, apiService: ApiService) {
+fun ProfileData(navController: NavController, apiService: ApiService) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -70,13 +70,13 @@ fun EventDataForm(navController: NavController, apiService: ApiService) {
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             InputFields("Enter Name") { name = it }
             InputFields("Enter Email") { email = it }
             InputFields("Enter PhoneNumber") { phonenumber = it }
             InputFields("Enter Location") { location = it }
             InputFields("Enter Batch") { batch = it } // Fixed
             InputFields("Your Current Work Status"){ currentworkstatus = it }
-
             Button(
                 onClick = {
                     val profileData = ProfileData(

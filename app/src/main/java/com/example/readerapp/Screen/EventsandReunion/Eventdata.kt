@@ -1,7 +1,5 @@
 package com.example.readerapp.Screen.EventsandReunion
 
-import android.util.EventLogTags
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -23,12 +20,11 @@ import com.example.readerapp.Retrofit.ApiService
 import com.example.readerapp.Retrofit.EventData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventDataForm(navController: NavController, apiService: ApiService) {
+fun EventDataForm(navController: NavController, apiService: ApiService, userId: String) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -73,12 +69,12 @@ fun EventDataForm(navController: NavController, apiService: ApiService) {
             InputFields("Enter Description") { description = it }
             InputFields("Enter Dates") { dates = it }
             InputFields("Enter Location") { location = it }
-            InputFields("Fill the form") { forms = it } // Fixed
-            InputFields("Event Type") { eventType = it } // Fixed
-
+            InputFields("Fill the form") { forms = it }
+            InputFields("Event Type") { eventType = it }
             Button(
                 onClick = {
                     val eventData = EventData(
+                        userId=userId,
                         Headline = headline,
                         Description = description,
                         Dates = dates,

@@ -14,13 +14,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.readerapp.Retrofit.ApiService
 import com.example.readerapp.jobData.JobPosting
 import com.example.readerapp.viewmodel.JobViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JobListScreen(navController: NavController, viewModel: JobViewModel) {
-    val jobs = viewModel.jobList.collectAsState().value
+fun JobListScreen(navController: NavController, apiService: ApiService, JobViewModel: JobViewModel,) {
+    val jobs = JobViewModel.jobList.collectAsState().value
 
     Scaffold(
         topBar = {

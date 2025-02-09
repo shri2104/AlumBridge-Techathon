@@ -3,6 +3,7 @@ package com.example.readerapp.Navigation
 
 import EventReunionsScreen
 import JobListScreen
+import ProfileFormScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
@@ -19,6 +20,7 @@ import com.example.readerapp.Screen.EventsandReunion.EventDataForm
 import com.example.readerapp.Screen.EventsandReunion.EventListScreen
 import com.example.readerapp.Screen.EventsandReunion.PostedEventsScreen
 import com.example.readerapp.Screen.Institute.InstituteDashBoard
+import com.example.readerapp.Screen.Login.InstituteRegistrationForm
 import com.example.readerapp.Screen.RSplashScreen
 import com.example.readerapp.Screen.donationportal.BankDetailsScreen
 import com.example.readerapp.Screen.donationportal.BankDetailsScreenForInstitute
@@ -30,6 +32,7 @@ import com.example.readerapp.Screen.donationportal.StudentDonationListScreen
 import com.example.readerapp.Screen.donationportal.TDonationInputScreen
 import com.example.readerapp.Screen.donationportal.ThankYouScreen
 import com.example.readerapp.Screen.jobs.AddJobScreen
+import com.example.readerapp.Screen.profile.Instituteprofilepage
 import com.example.readerapp.donationdata.TotalDonationViewModel
 import com.example.readerapp.viewmodel.DonationViewModel
 import com.example.readerapp.viewmodel.EventViewModel
@@ -52,7 +55,7 @@ fun RNavigation(apiService: ApiService) {
             RSplashScreen(navController = navController)
         }
         composable(ReaderScreens.LoginScreen.name) {
-            RLoginScreen(navController = navController)
+            RLoginScreen(navController = navController,apiService)
         }
         composable(ReaderScreens.ReaderHomeScreen.name) {
             RHomeScreen(
@@ -61,20 +64,19 @@ fun RNavigation(apiService: ApiService) {
                 totalDonationViewModel =totalDonationViewModel
             )
         }
-        composable(ReaderScreens.AddJobScreen.name) {
-            AddJobScreen(navController) { JobViewModel.addJob(it) }
-        }
-        composable("Eventpost"){
-            EventDataForm(
-                navController = navController,
-                apiService
-            )
-        }
+        
+
         composable("postedEvent"){
             EventListScreen(apiService)
         }
+        composable("ProfileS"){
+            ProfileFormScreen(apiService, navController)
+        }
+        composable(ReaderScreens.AddJobScreen.name) {
+            AddJobScreen(navController = navController,apiService)
+        }
         composable(ReaderScreens.JobListScreen.name) {
-            JobListScreen(navController = navController, JobViewModel)
+            JobListScreen(navController = navController,apiService,JobViewModel)
         }
         composable(ReaderScreens.DonationPortal.name) {
             BankDetailsScreen(navController = navController,
@@ -88,16 +90,43 @@ fun RNavigation(apiService: ApiService) {
             )
         }
         composable(ReaderScreens.ProfileScreen.name) {
-            EventDataForm(
+            ProfileFormScreen(
                 navController = navController,
                 apiService = apiService,
             )
         }
-        composable(ReaderScreens.InstituteHomeScreen.name) {
+        composable("InstituteHomeScreen/{userId}") {backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
             InstituteDashBoard(
+                userId = userId,
                 navController = navController,
                 jobViewModel = JobViewModel,
                 totalDonationViewModel = totalDonationViewModel
+
+            )
+        }
+        composable("Instituteprfilepage/{userId}") {backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            Instituteprofilepage(
+                userId = userId,
+                navController = navController,
+                apiService = apiService
+            )
+        }
+        composable("Instituteregistration/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            InstituteRegistrationForm(
+                userId = userId,
+                navController = navController,
+                apiService = apiService
+            )
+        }
+        composable("Eventpost/{userId}") {backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            EventDataForm(
+                navController = navController,
+                apiService,
+                userId = userId
             )
         }
         composable(ReaderScreens.EventsPostings.name) {
@@ -129,7 +158,8 @@ fun RNavigation(apiService: ApiService) {
         composable(ReaderScreens.totalDonation.name) {
             TDonationInputScreen(
                 navController = navController,
-                totalDonationViewModel =totalDonationViewModel
+                totalDonationViewModel = totalDonationViewModel,
+                apiservice = apiService
             )
         }
         composable(ReaderScreens.DonationList.name) {

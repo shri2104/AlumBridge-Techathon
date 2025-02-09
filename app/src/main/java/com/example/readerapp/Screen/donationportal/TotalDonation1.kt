@@ -2,8 +2,6 @@ package com.example.readerapp.Screen.donationportal
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.ui.platform.LocalContext
-
-
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -19,17 +17,24 @@ import com.example.readerapp.donationdata.TotalDonationViewModel
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.Favorite
 import com.example.readerapp.Navigation.ReaderScreens
+import com.example.readerapp.Retrofit.ApiService
+import com.example.readerapp.Retrofit.Donatedinfo
+import com.example.readerapp.Retrofit.ProfileData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TDonationInputScreen(
     navController: NavController,
-    totalDonationViewModel: TotalDonationViewModel
+    totalDonationViewModel: TotalDonationViewModel,
+    apiservice: ApiService
 ) {
-
+    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     var amount by remember { mutableStateOf("") }
     var donorName by remember { mutableStateOf("") }
-    var batchof by remember { mutableStateOf("") } // Store the batch number as a string
+    var batchof by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -56,8 +61,6 @@ fun TDonationInputScreen(
         ) {
             Text(text = "Enter Donation Information", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(20.dp))
-
-            // Amount Input
             Text(text = "Amount", style = MaterialTheme.typography.bodyLarge)
             OutlinedTextField(
                 value = amount,
@@ -66,9 +69,7 @@ fun TDonationInputScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth()
             )
-
             Spacer(modifier = Modifier.height(16.dp))
-
             Text(text = "Donor Name", style = MaterialTheme.typography.bodyLarge)
             OutlinedTextField(
                 value = donorName,
@@ -76,10 +77,8 @@ fun TDonationInputScreen(
                 label = { Text("Donor Name") },
                 modifier = Modifier.fillMaxWidth()
             )
-
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Batch Input
             Text(text = "Batch", style = MaterialTheme.typography.bodyLarge)
             OutlinedTextField(
                 value = batchof,
@@ -87,15 +86,25 @@ fun TDonationInputScreen(
                 label = { Text("Batch") },
                 modifier = Modifier.fillMaxWidth()
             )
-
             Spacer(modifier = Modifier.height(20.dp))
             Button(onClick = {
                 if (amount.isNotBlank() && donorName.isNotBlank() && batchof.isNotBlank()) {
-                    // Convert batchof to an integer, and handle invalid input gracefully
+                    val donateddata = Donatedinfo(
+                        Amount = amount,
+                        Donarname = donorName,
+                        Batch = batchof
+                    )
+                    coroutineScope.launch(Dispatchers.IO) {
+                        try {
+                            val response = apiservice.StoreDonationInfo(donateddata)
+                        } catch (e: Exception) {
+                        }
+                    }
                     val batchofInt = batchof.toIntOrNull() ?: 0 // Default to 0 if conversion fails
                     totalDonationViewModel.addTotalDonation(amount.toDouble(), donorName, batchofInt)
                     Toast.makeText(context, "Donation Added!", Toast.LENGTH_SHORT).show()
                     navController.navigate(ReaderScreens.DonationList.name)
+
                 } else {
                     Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
                 }

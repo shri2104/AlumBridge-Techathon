@@ -6,16 +6,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.readerapp.Retrofit.ApiService
 import com.example.readerapp.jobData.JobPosting
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddJobScreen(navController: NavController, insertJob: (JobPosting) -> Unit) {
+fun AddJobScreen(navController: NavController, apiService: ApiService) {
     var title by remember { mutableStateOf("") }
     var company by remember { mutableStateOf("") }
     var role by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var applyLink by remember { mutableStateOf("") }  // Add state for apply link
+    var applyLink by remember { mutableStateOf("") }
+
+    // Define CoroutineScope for launching background tasks
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -34,7 +40,6 @@ fun AddJobScreen(navController: NavController, insertJob: (JobPosting) -> Unit) 
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
-                // Job Title Field
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
@@ -48,10 +53,7 @@ fun AddJobScreen(navController: NavController, insertJob: (JobPosting) -> Unit) 
                     ),
                     singleLine = true
                 )
-
                 Spacer(modifier = Modifier.height(12.dp))
-
-                // Company Field
                 OutlinedTextField(
                     value = company,
                     onValueChange = { company = it },
@@ -65,10 +67,7 @@ fun AddJobScreen(navController: NavController, insertJob: (JobPosting) -> Unit) 
                     ),
                     singleLine = true
                 )
-
                 Spacer(modifier = Modifier.height(12.dp))
-
-                // Role Field
                 OutlinedTextField(
                     value = role,
                     onValueChange = { role = it },
@@ -82,10 +81,7 @@ fun AddJobScreen(navController: NavController, insertJob: (JobPosting) -> Unit) 
                     ),
                     singleLine = true
                 )
-
                 Spacer(modifier = Modifier.height(12.dp))
-
-                // Job Description Field
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
@@ -99,10 +95,7 @@ fun AddJobScreen(navController: NavController, insertJob: (JobPosting) -> Unit) 
                     ),
                     maxLines = 5
                 )
-
                 Spacer(modifier = Modifier.height(12.dp))
-
-                // Apply Link Field
                 OutlinedTextField(
                     value = applyLink,
                     onValueChange = { applyLink = it },
@@ -116,19 +109,32 @@ fun AddJobScreen(navController: NavController, insertJob: (JobPosting) -> Unit) 
                     ),
                     singleLine = true
                 )
-
                 Spacer(modifier = Modifier.height(16.dp))
-
                 Button(
                     onClick = {
-                        insertJob(JobPosting(
+                        val jobPosting = JobPosting(
                             title = title,
                             company = company,
                             role = role,
                             description = description,
-                            applyLink = applyLink // Pass the applyLink here
-                        ))
-                        navController.popBackStack()
+                            applyLink = applyLink
+                        )
+
+                        coroutineScope.launch(Dispatchers.IO) {
+                            try {
+                                val response = apiService.postJob(jobPosting)
+                                if (response.isSuccessful) {
+                                    // Job posted successfully
+                                    navController.popBackStack() // Navigate back after posting
+                                } else {
+                                    // Handle the error response (e.g., show error message)
+                                    println("Error: ${response.errorBody()?.string()}")
+                                }
+                            } catch (e: Exception) {
+                                // Handle network failure
+                                println("Error: ${e.localizedMessage}")
+                            }
+                        }
                     },
                     modifier = Modifier.fillMaxWidth().height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
