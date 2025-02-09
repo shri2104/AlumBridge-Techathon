@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.Favorite
 import com.example.readerapp.Navigation.ReaderScreens
 import com.example.readerapp.Retrofit.ApiService
 import com.example.readerapp.Retrofit.Donatedinfo
-import com.example.readerapp.Retrofit.ProfileData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -28,7 +27,8 @@ import kotlinx.coroutines.launch
 fun TDonationInputScreen(
     navController: NavController,
     totalDonationViewModel: TotalDonationViewModel,
-    apiservice: ApiService
+    apiservice: ApiService,
+    userId: String
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -41,7 +41,7 @@ fun TDonationInputScreen(
             CenterAlignedTopAppBar(
                 title = { Text("Donation Input", fontSize = 20.sp) },
                 actions = {
-                    IconButton(onClick = { /* Navigate to other screens if needed */ }) {
+                    IconButton(onClick = { }) {
                         Icon(Icons.Filled.Favorite, contentDescription = "Donations")
                     }
                 },
@@ -90,6 +90,7 @@ fun TDonationInputScreen(
             Button(onClick = {
                 if (amount.isNotBlank() && donorName.isNotBlank() && batchof.isNotBlank()) {
                     val donateddata = Donatedinfo(
+                        userId=userId,
                         Amount = amount,
                         Donarname = donorName,
                         Batch = batchof
@@ -100,7 +101,7 @@ fun TDonationInputScreen(
                         } catch (e: Exception) {
                         }
                     }
-                    val batchofInt = batchof.toIntOrNull() ?: 0 // Default to 0 if conversion fails
+                    val batchofInt = batchof.toIntOrNull() ?: 0
                     totalDonationViewModel.addTotalDonation(amount.toDouble(), donorName, batchofInt)
                     Toast.makeText(context, "Donation Added!", Toast.LENGTH_SHORT).show()
                     navController.navigate(ReaderScreens.DonationList.name)

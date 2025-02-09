@@ -115,9 +115,8 @@ fun DonationCard(donation: TotalDonation) {
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
             )
 
-            Spacer(modifier = Modifier.height(8.dp)) // Adds space before the thank you message
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Thank you message
             Text(
                 text = "Thank you for your donation! 😊",
                 style = MaterialTheme.typography.bodyMedium,

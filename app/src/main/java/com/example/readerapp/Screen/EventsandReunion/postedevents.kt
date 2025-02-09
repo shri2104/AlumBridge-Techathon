@@ -73,7 +73,8 @@ fun PostedEventsScreen(eventViewModel: EventViewModel, navController: NavHostCon
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
-                } else {
+                }
+                else {
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                         item {
                             Text(

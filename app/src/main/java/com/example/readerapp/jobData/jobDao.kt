@@ -4,7 +4,7 @@ import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "jobList")
-data class JobPosting(
+data class JobPostin(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
     val company: String,
@@ -16,8 +16,8 @@ data class JobPosting(
 @Dao
 interface JobDao {
     @Insert
-    suspend fun insertJob(job: JobPosting)
+    suspend fun insertJob(job: JobPostin)
 
     @Query("SELECT * FROM jobList")
-    fun getAllJobs(): Flow<List<JobPosting>>
+    fun getAllJobs(): Flow<List<JobPostin>>
 }

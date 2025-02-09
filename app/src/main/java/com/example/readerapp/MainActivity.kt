@@ -63,18 +63,6 @@ class MainActivity : ComponentActivity() {
 }
 
 
-//@Composable
-//fun ReaderApp() {
-//    Surface(color=MaterialTheme.colorScheme.background,
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(top = 46.dp)) {
-//        Column(verticalArrangement = Arrangement.Center,
-//            horizontalAlignment = Alignment.CenterHorizontally) {
-//            RNavigation(apiService)
-//        }
-//    }
-//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

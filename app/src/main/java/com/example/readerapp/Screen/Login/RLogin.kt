@@ -128,6 +128,7 @@ fun RLoginScreen(
                             }
                         }
                     }
+
                     else {
                         viewModel.register(email, password) {
                             val userdata= emailuserid(

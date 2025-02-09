@@ -64,17 +64,10 @@ fun RNavigation(apiService: ApiService) {
                 totalDonationViewModel =totalDonationViewModel
             )
         }
-        
-
         composable("postedEvent"){
             EventListScreen(apiService)
         }
-        composable("ProfileS"){
-            ProfileFormScreen(apiService, navController)
-        }
-        composable(ReaderScreens.AddJobScreen.name) {
-            AddJobScreen(navController = navController,apiService)
-        }
+
         composable(ReaderScreens.JobListScreen.name) {
             JobListScreen(navController = navController,apiService,JobViewModel)
         }
@@ -89,12 +82,6 @@ fun RNavigation(apiService: ApiService) {
                 context = context
             )
         }
-        composable(ReaderScreens.ProfileScreen.name) {
-            ProfileFormScreen(
-                navController = navController,
-                apiService = apiService,
-            )
-        }
         composable("InstituteHomeScreen/{userId}") {backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             InstituteDashBoard(
@@ -102,7 +89,6 @@ fun RNavigation(apiService: ApiService) {
                 navController = navController,
                 jobViewModel = JobViewModel,
                 totalDonationViewModel = totalDonationViewModel
-
             )
         }
         composable("Instituteprfilepage/{userId}") {backStackEntry ->
@@ -113,6 +99,7 @@ fun RNavigation(apiService: ApiService) {
                 apiService = apiService
             )
         }
+
         composable("Instituteregistration/{userId}") { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             InstituteRegistrationForm(
@@ -129,6 +116,50 @@ fun RNavigation(apiService: ApiService) {
                 userId = userId
             )
         }
+        composable("StudentProfile/{userId}") {backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            ProfileFormScreen(
+                navController = navController,
+                apiService = apiService,
+                userId = userId
+            )
+        }
+        composable("DonationinfoEntry/{userId}") {backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            DonationInputScreen(
+                navController = navController,
+                donationViewModel = Donationviewmodel,
+                apiService = apiService,
+                userId = userId
+            )
+        }
+        composable("TotalDonation/{userId}") {backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            TDonationInputScreen(
+                navController = navController,
+                totalDonationViewModel = totalDonationViewModel,
+                apiservice = apiService,
+                userId = userId
+            )
+        }
+
+        composable("Donationdashboard/{userId}") {backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            BankDetailsScreenForInstitute(
+                navController = navController,
+                donationViewModel = Donationviewmodel,
+                apiservice = apiService,
+                userId = userId
+            )
+        }
+        composable("AddJobScreen/{userId}") {backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            AddJobScreen(
+                navController = navController,
+                apiService,
+                userId = userId
+            )
+        }
         composable(ReaderScreens.EventsPostings.name) {
             EventReunionsScreen(
                 navController = navController,
@@ -138,28 +169,10 @@ fun RNavigation(apiService: ApiService) {
         composable(ReaderScreens.Directory.name) {
             DisplayNamesScreen(navController = navController)
         }
-        composable(ReaderScreens.DonationInfoEntry.name) {
-            DonationInputScreen(
-                navController = navController,
-                donationViewModel = Donationviewmodel,
-                apiService = apiService
-            )
-        }
-        composable(ReaderScreens.DonationInfo.name) {
-            BankDetailsScreenForInstitute(navController = navController,
-                donationViewModel = Donationviewmodel)
-        }
         composable(ReaderScreens.postedEvents.name) {
             PostedEventsScreen(
                 navController = navController,
                 eventViewModel =eventviewmodel
-            )
-        }
-        composable(ReaderScreens.totalDonation.name) {
-            TDonationInputScreen(
-                navController = navController,
-                totalDonationViewModel = totalDonationViewModel,
-                apiservice = apiService
             )
         }
         composable(ReaderScreens.DonationList.name) {

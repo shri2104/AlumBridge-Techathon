@@ -34,7 +34,8 @@ import kotlinx.coroutines.launch
 fun DonationInputScreen(
     donationViewModel: DonationViewModel,
     navController: NavHostController,
-    apiService: ApiService
+    apiService: ApiService,
+    userId: String
 ) {
     val coroutineScope = rememberCoroutineScope()
     var accountHolderName by remember { mutableStateOf(TextFieldValue()) }
@@ -107,6 +108,7 @@ fun DonationInputScreen(
                             ifscCode.text
                         )
                         val donationdata = DonationData(
+                            userId=userId,
                             AccountHolderName = accountHolderName.toString(),
                             BankName = bankName.toString(),
                             AccountNumber = accountNumber.toString(),
@@ -156,7 +158,9 @@ fun InputFieldWithIcon(
 @Composable
 fun BankDetailsScreenForInstitute(
     navController: NavController,
-    donationViewModel: DonationViewModel
+    donationViewModel: DonationViewModel,
+    apiservice: ApiService,
+    userId: String
 ) {
     val donationState by donationViewModel.donation.collectAsState()
 
@@ -220,7 +224,7 @@ fun BankDetailsScreenForInstitute(
                 verticalArrangement = Arrangement.spacedBy(8.dp) // Space between buttons
             ) {
                 Button(
-                    onClick = { navController.navigate(ReaderScreens.DonationInfoEntry.name) },
+                    onClick = { navController.navigate("TotalDonation/$userId") },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF03DAC5))
                 ) {
@@ -234,7 +238,7 @@ fun BankDetailsScreenForInstitute(
                     Text("Donations", color = Color.White)
                 }
                 Button(
-                    onClick = { navController.navigate(ReaderScreens.totalDonation.name) },
+                    onClick = { navController.navigate("DonationinfoEntry/$userId") },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF03DAC5))
                 ) {

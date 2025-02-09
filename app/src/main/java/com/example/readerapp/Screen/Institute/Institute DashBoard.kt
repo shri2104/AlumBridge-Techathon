@@ -172,7 +172,6 @@ fun InstituteDashBoard(
     }
 }
 
-
 @Composable
 fun TrendingEventsSection(navController: NavController) {
     // Display a list of upcoming or trending events
@@ -318,13 +317,13 @@ fun BottomInstituteNavigationBar(navController: NavController, userId: String) {
         )
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("DonationInfo") },
+            onClick = {  navController.navigate("Donationdashboard/$userId") },
             icon = { Icon(Icons.Filled.Favorite, contentDescription = "Donation Portal") },
             label = { Text("Donations") }
         )
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("JobListScreen") },
+            onClick = {navController.navigate("AddJobScreen/$userId") },
             icon = { Icon(Icons.Filled.Work, contentDescription = "Job Postings") },
             label = { Text("Jobs") }
         )

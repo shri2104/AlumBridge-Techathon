@@ -1,6 +1,5 @@
 package com.example.readerapp.Retrofit
 
-import com.example.readerapp.jobData.JobPosting
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,8 +18,8 @@ data class EventData(
     val EventType: String?,
 )
 
-
 data class ProfileData(
+    val userId: String?,
     val Name: String,
     val Email: String?,
     val Phonenumber: String?,
@@ -30,6 +29,7 @@ data class ProfileData(
 )
 
 data class DonationData(
+    val userId: String?,
     val AccountHolderName: String?,
     val BankName: String?,
     val AccountNumber: String?,
@@ -37,13 +37,14 @@ data class DonationData(
 )
 
 data class Donatedinfo(
+    val userId: String?,
     val Amount: String?,
     val Donarname: String?,
     val Batch: String?,
 )
 
 data class InstituteData(
-    val userId: String,  // Add userId field
+    val userId: String,
     val name: String,
     val type: String,
     val location: String,
@@ -56,12 +57,14 @@ data class InstituteData(
 )
 
 data class JobPosting(
+    val userId: String,
     val title: String,
     val company: String,
     val role: String,
     val description: String,
     val applyLink: String
 )
+
 
 data class emailuserid(
    val email:String,
@@ -92,12 +95,19 @@ interface ApiService {
 
     @POST("StoreDonationData01")
     suspend fun StoreDonationdata(@Body jobData: DonationData): Response<ApiResponse>
+
     @POST("Storeprofiledata")
     suspend fun StoreProfiledata(@Body jobData: ProfileData): Response<ApiResponse>
+
     @POST("storeDonationInfo")
     suspend fun StoreDonationInfo(@Body jobData: Donatedinfo): Response<ApiResponse>
-    @POST("StoreJob")
-    suspend fun postJob(@Body jobPosting: JobPosting): Response<ApiResponse>
+
+
+    @POST("storealljobs")
+    suspend fun postJob(@Body jobPostin: JobPosting): Response<ApiResponse>
+
+    @GET("getalljobs")
+    suspend fun getAllJob(): List<JobPosting>
 }
 
 fun createApiservice(): ApiService {

@@ -7,13 +7,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.readerapp.Retrofit.ApiService
-import com.example.readerapp.jobData.JobPosting
+import com.example.readerapp.Retrofit.JobPosting
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddJobScreen(navController: NavController, apiService: ApiService) {
+fun AddJobScreen(navController: NavController, apiService: ApiService, userId: String) {
     var title by remember { mutableStateOf("") }
     var company by remember { mutableStateOf("") }
     var role by remember { mutableStateOf("") }
@@ -112,27 +112,18 @@ fun AddJobScreen(navController: NavController, apiService: ApiService) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = {
-                        val jobPosting = JobPosting(
+                        val jobposting = JobPosting(
+                            userId=userId,
                             title = title,
                             company = company,
                             role = role,
                             description = description,
                             applyLink = applyLink
                         )
-
                         coroutineScope.launch(Dispatchers.IO) {
                             try {
-                                val response = apiService.postJob(jobPosting)
-                                if (response.isSuccessful) {
-                                    // Job posted successfully
-                                    navController.popBackStack() // Navigate back after posting
-                                } else {
-                                    // Handle the error response (e.g., show error message)
-                                    println("Error: ${response.errorBody()?.string()}")
-                                }
+                                val response = apiService.postJob(jobposting)
                             } catch (e: Exception) {
-                                // Handle network failure
-                                println("Error: ${e.localizedMessage}")
                             }
                         }
                     },

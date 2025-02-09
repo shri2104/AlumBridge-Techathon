@@ -25,13 +25,12 @@ fun EventListScreen(apiService: ApiService) {
                 val response = apiService.getAllEvents()
                 eventList = response
             } catch (e: Exception) {
-                eventList = emptyList() // Handle error
+                eventList = emptyList()
             } finally {
                 isLoading = false
             }
         }
     }
-
     Scaffold(
         topBar = {
             TopAppBar(
