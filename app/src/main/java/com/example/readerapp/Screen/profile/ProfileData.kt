@@ -87,12 +87,13 @@ fun EventDataForm(navController: NavController, apiService: ApiService) {
                         Batch = batch,
                         CurrentworkStatus = currentworkstatus
                     )
-                    coroutineScope.launch(Dispatchers.IO) {
-                        try {
-                            val response = apiService.Storeprofiledata(profileData)
-                        } catch (e: Exception) {
-                        }
-                    }
+//                    coroutineScope.launch(Dispatchers.IO) {
+//                        try {
+//                            val response = apiService.Storeprofiledata(profileData)
+//
+//                        } catch (e: Exception) {
+//                        }
+//                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -101,7 +102,6 @@ fun EventDataForm(navController: NavController, apiService: ApiService) {
         }
     }
 }
-
 
 @Composable
 fun InputFields(placeholder: String, onValueChange: (String) -> Unit) {

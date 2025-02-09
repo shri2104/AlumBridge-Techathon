@@ -19,7 +19,6 @@ import com.example.readerapp.Screen.EventsandReunion.EventDataForm
 import com.example.readerapp.Screen.EventsandReunion.EventListScreen
 import com.example.readerapp.Screen.EventsandReunion.PostedEventsScreen
 import com.example.readerapp.Screen.Institute.InstituteDashBoard
-import com.example.readerapp.Screen.Login.RLoginScreen
 import com.example.readerapp.Screen.RSplashScreen
 import com.example.readerapp.Screen.donationportal.BankDetailsScreen
 import com.example.readerapp.Screen.donationportal.BankDetailsScreenForInstitute
@@ -35,6 +34,7 @@ import com.example.readerapp.donationdata.TotalDonationViewModel
 import com.example.readerapp.viewmodel.DonationViewModel
 import com.example.readerapp.viewmodel.EventViewModel
 import com.example.readerapp.viewmodel.ProfileViewModel
+import com.examplepackage.RLoginScreen
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

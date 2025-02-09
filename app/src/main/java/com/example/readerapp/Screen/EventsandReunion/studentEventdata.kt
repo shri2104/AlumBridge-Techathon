@@ -65,7 +65,7 @@ fun EventItem(event: EventData) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = event.Headline, style = MaterialTheme.typography.headlineSmall)
+            event.Headline?.let { Text(text = it, style = MaterialTheme.typography.headlineSmall) }
             Text(text = "Date: ${event.Dates}", style = MaterialTheme.typography.bodyMedium)
             Text(text = "Location: ${event.Location}", style = MaterialTheme.typography.bodyMedium)
             Text(text = "Type: ${event.EventType}", style = MaterialTheme.typography.bodyMedium)

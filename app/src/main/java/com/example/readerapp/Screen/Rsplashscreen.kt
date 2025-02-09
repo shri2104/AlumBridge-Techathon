@@ -43,8 +43,14 @@ fun RSplashScreen(navController: NavController) {
                 easing = { OvershootInterpolator(8f).getInterpolation(it) }
             )
         )
+        scale.animateTo(
+            targetValue=0.9f,
+            animationSpec = tween(
+                durationMillis = 1000
+            )
+        )
         delay(2000L)
-        navController.navigate(ReaderScreens.InstituteHomeScreen.name)
+        navController.navigate(ReaderScreens.LoginScreen.name)
     }
     Box(
         modifier = Modifier.fillMaxSize(),

@@ -42,6 +42,7 @@ interface ApiService {
     suspend fun getAllEvents(): List<EventData>
     @POST("StoreDonationData01")
     suspend fun StoreDonationdata(@Body jobData: DonationData): Response<ApiResponse>
+
 }
 
 fun createApiservice(): ApiService {
