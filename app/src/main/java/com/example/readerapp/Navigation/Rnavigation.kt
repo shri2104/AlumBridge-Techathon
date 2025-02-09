@@ -68,9 +68,7 @@ fun RNavigation(apiService: ApiService) {
             EventListScreen(apiService)
         }
 
-        composable(ReaderScreens.JobListScreen.name) {
-            JobListScreen(navController = navController,apiService,JobViewModel)
-        }
+
         composable(ReaderScreens.DonationPortal.name) {
             BankDetailsScreen(navController = navController,
                 donationViewModel = Donationviewmodel,apiService)
@@ -88,7 +86,8 @@ fun RNavigation(apiService: ApiService) {
                 userId = userId,
                 navController = navController,
                 jobViewModel = JobViewModel,
-                totalDonationViewModel = totalDonationViewModel
+                totalDonationViewModel = totalDonationViewModel,
+                apiService = apiService
             )
         }
         composable("Instituteprfilepage/{userId}") {backStackEntry ->
@@ -160,6 +159,13 @@ fun RNavigation(apiService: ApiService) {
                 userId = userId
             )
         }
+        composable("JobListScreen/{userId}") {backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            JobListScreen(
+                navController = navController,apiService,JobViewModel,userId
+            )
+        }
+
         composable(ReaderScreens.EventsPostings.name) {
             EventReunionsScreen(
                 navController = navController,

@@ -1,5 +1,6 @@
 package com.example.readerapp.Screen.Institute
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -32,6 +35,7 @@ import androidx.navigation.NavController
 import com.example.readerapp.Donationdata2.TotalDonation
 import com.example.readerapp.Navigation.ReaderScreens
 import com.example.readerapp.R
+import com.example.readerapp.Retrofit.ApiService
 import com.example.readerapp.donationdata.TotalDonationViewModel
 import com.example.readerapp.viewmodel.JobViewModel
 
@@ -41,13 +45,24 @@ fun InstituteDashBoard(
     navController: NavController,
     jobViewModel: JobViewModel,
     totalDonationViewModel: TotalDonationViewModel,
-    userId: String
+    userId: String,
+    apiService: ApiService
 ) {
-    val totalJobs by jobViewModel.totalJobCount.collectAsState()
+    val context = LocalContext.current
+    var totalJobs by remember { mutableStateOf(0) }
     val donations = totalDonationViewModel.allTotalDonations.collectAsState(initial = emptyList())
     val totalDonationAmount = donations.value.sumOf { it.amount }.toString()
 
     var expanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(userId) {
+        try {
+            val response = apiService.getJobsByUser(userId)
+            totalJobs = response.size
+        } catch (e: Exception) {
+            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -80,12 +95,10 @@ fun InstituteDashBoard(
                         )
                         DropdownMenuItem(
                             onClick = {
-
                                 expanded = false
                             },
                             text = { Text("Directory") }
                         )
-
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -96,7 +109,7 @@ fun InstituteDashBoard(
                     .shadow(4.dp, RoundedCornerShape(0.dp))
             )
         },
-        bottomBar = { BottomInstituteNavigationBar(navController = navController,userId) }
+        bottomBar = { BottomInstituteNavigationBar(navController = navController, userId) }
     ) { paddingValues ->
         Surface(
             modifier = Modifier
@@ -146,9 +159,8 @@ fun InstituteDashBoard(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                TrendingEventsSection(navController)
+                TrendingEventsSection(navController,apiService)
 
-                // Recent Donations Section
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Recent Donations",
@@ -158,7 +170,6 @@ fun InstituteDashBoard(
                 )
                 RecentDonationsSection(donations.value)
 
-                // Alumni Highlights Section
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Alumni Highlights",
@@ -172,9 +183,9 @@ fun InstituteDashBoard(
     }
 }
 
+
 @Composable
-fun TrendingEventsSection(navController: NavController) {
-    // Display a list of upcoming or trending events
+fun TrendingEventsSection(navController: NavController, apiService: ApiService) {
     Card(
         shape = RoundedCornerShape(12.dp),
         elevation =  CardDefaults.cardElevation(4.dp),
@@ -212,7 +223,6 @@ fun RecentDonationsSection(donations: List<TotalDonation>) {
 
 @Composable
 fun AlumniHighlightsSection() {
-    // Display a highlight for an alumnus
     Card(
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(4.dp),
@@ -224,7 +234,7 @@ fun AlumniHighlightsSection() {
             Text(text = "Alumni of the Month: John Doe", fontWeight = FontWeight.Bold)
             Text(text = "John is a successful entrepreneur, creating impactful solutions in the tech industry.", style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { /* Navigate to alumni details */ }) {
+            Button(onClick = { }) {
                 Text("Read More")
             }
         }
@@ -321,9 +331,10 @@ fun BottomInstituteNavigationBar(navController: NavController, userId: String) {
             icon = { Icon(Icons.Filled.Favorite, contentDescription = "Donation Portal") },
             label = { Text("Donations") }
         )
+
         NavigationBarItem(
             selected = false,
-            onClick = {navController.navigate("AddJobScreen/$userId") },
+            onClick = {navController.navigate("JobListScreen/$userId") },
             icon = { Icon(Icons.Filled.Work, contentDescription = "Job Postings") },
             label = { Text("Jobs") }
         )

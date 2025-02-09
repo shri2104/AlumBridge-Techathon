@@ -56,6 +56,7 @@ data class InstituteData(
     val websiteURL: String
 )
 
+
 data class JobPosting(
     val userId: String,
     val title: String,
@@ -74,7 +75,6 @@ data class emailuserid(
 data class ApiResponse(val success: Boolean, val id: String?)
 
 interface ApiService {
-
     @POST("StoreInstitutedata")
     suspend fun Institutedata(@Body instituteData: InstituteData): Response<ApiResponse>
 
@@ -102,12 +102,12 @@ interface ApiService {
     @POST("storeDonationInfo")
     suspend fun StoreDonationInfo(@Body jobData: Donatedinfo): Response<ApiResponse>
 
-
     @POST("storealljobs")
     suspend fun postJob(@Body jobPostin: JobPosting): Response<ApiResponse>
 
-    @GET("getalljobs")
-    suspend fun getAllJob(): List<JobPosting>
+    @GET("getalljobs/{userId}")
+    suspend fun getJobsByUser(@Path("userId") userId: String): List<JobPosting>
+
 }
 
 fun createApiservice(): ApiService {

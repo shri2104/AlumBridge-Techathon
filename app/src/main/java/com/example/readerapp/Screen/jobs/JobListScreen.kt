@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.example.readerapp.Retrofit.ApiService
 import com.example.readerapp.Retrofit.JobPosting
 
@@ -29,20 +27,25 @@ import com.example.readerapp.viewmodel.JobViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JobListScreen(navController: NavController, apiService: ApiService,JobViewModel: JobViewModel) {
+fun JobListScreen(
+    navController: NavController,
+    apiService: ApiService,
+    JobViewModel: JobViewModel,
+    userId: String
+) {
     val jobList = remember { mutableStateListOf<JobPosting>() }
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(true) {
+    // Fetch jobs specific to userId
+    LaunchedEffect(userId) {
         try {
-            val response = apiService.getAllJob()
+            val response = apiService.getJobsByUser(userId) // Call the API with userId
             if (response.isNotEmpty()) {
                 jobList.clear()
                 jobList.addAll(response)
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
@@ -52,7 +55,7 @@ fun JobListScreen(navController: NavController, apiService: ApiService,JobViewMo
             CenterAlignedTopAppBar(
                 title = { Text("Available Jobs", style = MaterialTheme.typography.titleLarge) },
                 actions = {
-                    IconButton(onClick = { navController.navigate("AddJobScreen") }) {
+                    IconButton(onClick = { navController.navigate("AddJobScreen/$userId") }) {
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add Job",
@@ -67,7 +70,6 @@ fun JobListScreen(navController: NavController, apiService: ApiService,JobViewMo
             )
         },
         content = { paddingValues ->
-            // Passing jobs list and other parameters to Job List composable
             JobListContent(
                 jobs = jobList,
                 expanded = expanded,
@@ -79,6 +81,7 @@ fun JobListScreen(navController: NavController, apiService: ApiService,JobViewMo
         }
     )
 }
+
 
 @Composable
 fun JobListContent(
