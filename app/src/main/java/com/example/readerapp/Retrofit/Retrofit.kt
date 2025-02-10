@@ -16,16 +16,18 @@ data class EventData(
     val Location: String?,
     val Forms: String?,
     val EventType: String?,
+    val createdAt: Long? // Timestamp in milliseconds or String in ISO 8601 format (choose as needed)
 )
 
+
 data class ProfileData(
-    val userId: String?,
+    val userId: String,
     val Name: String,
     val Email: String?,
     val Phonenumber: String?,
     val Location: String?,
     val Batch: String?,
-    val CurrentworkStatus: String?
+    val CurrentworkStatus: String
 )
 
 data class DonationData(
@@ -36,12 +38,15 @@ data class DonationData(
     val IFSCcode: String?,
 )
 
+
 data class Donatedinfo(
     val userId: String?,
     val Amount: String?,
     val Donarname: String?,
     val Batch: String?,
+    val timestamp: Long,
 )
+
 
 data class InstituteData(
     val userId: String,
@@ -90,14 +95,11 @@ interface ApiService {
     @POST("storeEventData")
     suspend fun StoreEventData(@Body jobData: EventData): Response<ApiResponse>
 
-    @GET("getEvents")
-    suspend fun getAllEvents(): List<EventData>
-
     @POST("StoreDonationData01")
     suspend fun StoreDonationdata(@Body jobData: DonationData): Response<ApiResponse>
 
     @POST("Storeprofiledata")
-    suspend fun StoreProfiledata(@Body jobData: ProfileData): Response<ApiResponse>
+    suspend fun StoreProfiledata(@Body profileData: ProfileData): Response<ApiResponse>
 
     @POST("storeDonationInfo")
     suspend fun StoreDonationInfo(@Body jobData: Donatedinfo): Response<ApiResponse>
@@ -108,6 +110,17 @@ interface ApiService {
     @GET("getalljobs/{userId}")
     suspend fun getJobsByUser(@Path("userId") userId: String): List<JobPosting>
 
+    @GET("getEvents/{userId}")
+    suspend fun getAllEvents(@Path("userId") userId: String): List<EventData>
+
+    @GET("Getalldonation/{userId}")
+    suspend fun Getalldonation(@Path("userId") userId: String): List<Donatedinfo>
+
+    @GET("Getstudentprofile/{userId}")
+    suspend fun Getstudentprofile(@Path("userId") userId: String): ProfileData
+
+    @GET("getallprofile/{userId}")
+    suspend fun getprofile(@Path("userId") userId: String): List<ProfileData>
 }
 
 fun createApiservice(): ApiService {

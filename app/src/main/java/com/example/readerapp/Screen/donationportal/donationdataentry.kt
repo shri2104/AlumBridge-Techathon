@@ -224,21 +224,21 @@ fun BankDetailsScreenForInstitute(
                 verticalArrangement = Arrangement.spacedBy(8.dp) // Space between buttons
             ) {
                 Button(
-                    onClick = { navController.navigate("TotalDonation/$userId") },
+                    onClick = { navController.navigate("DonationinfoEntry/$userId") },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF03DAC5))
                 ) {
                     Text("Update Bank Details", color = Color.White)
                 }
                 Button(
-                    onClick = { navController.navigate(ReaderScreens.DonationList.name) },
+                    onClick = { navController.navigate("DonationList/$userId") },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF03DAC5))
                 ) {
                     Text("Donations", color = Color.White)
                 }
                 Button(
-                    onClick = { navController.navigate("DonationinfoEntry/$userId") },
+                    onClick = {navController.navigate("TotalDonation/$userId") },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF03DAC5))
                 ) {

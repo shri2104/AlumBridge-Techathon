@@ -74,18 +74,21 @@ fun EventDataForm(navController: NavController, apiService: ApiService, userId: 
             Button(
                 onClick = {
                     val eventData = EventData(
-                        userId=userId,
+                        userId = userId,
                         Headline = headline,
                         Description = description,
                         Dates = dates,
                         Location = location,
                         Forms = forms,
-                        EventType = eventType
+                        EventType = eventType,
+                        createdAt = System.currentTimeMillis() // Add current timestamp as createdAt
                     )
                     coroutineScope.launch(Dispatchers.IO) {
                         try {
                             val response = apiService.StoreEventData(eventData)
+                            // Handle the response if needed
                         } catch (e: Exception) {
+                            // Handle error
                         }
                     }
                 },
@@ -96,7 +99,6 @@ fun EventDataForm(navController: NavController, apiService: ApiService, userId: 
         }
     }
 }
-
 
 @Composable
 fun InputFields(placeholder: String, onValueChange: (String) -> Unit) {

@@ -9,20 +9,47 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.readerapp.donationdata.TotalDonationViewModel
-import com.example.readerapp.Donationdata2.TotalDonation
 import androidx.compose.ui.text.font.FontWeight
 import com.example.readerapp.Navigation.ReaderScreens
+import com.example.readerapp.Retrofit.ApiService
+import com.example.readerapp.Retrofit.Donatedinfo
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DonationListScreen(navController: NavController, totalDonationViewModel: TotalDonationViewModel) {
-    val donations = totalDonationViewModel.allTotalDonations.collectAsState(initial = emptyList())
+fun DonationListScreen(
+    navController: NavController,
+    apiService: ApiService,
+    userId: String
+) {
+    var donations by remember { mutableStateOf<List<Donatedinfo>?>(null) }
+    val errorMessage = remember { mutableStateOf<String?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+    var isLoading by remember { mutableStateOf(true) } // Corrected initialization
+
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            try {
+                val response = apiService.Getalldonation(userId)
+                donations = response
+            } catch (e: Exception) {
+                donations = emptyList()
+                errorMessage.value = "Failed to load donations"
+            } finally {
+                isLoading = false
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -41,7 +68,7 @@ fun DonationListScreen(navController: NavController, totalDonationViewModel: Tot
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(ReaderScreens.totalDonation.name) }, // Navigate to the entry screen
+                onClick = { navController.navigate("TotalDonation/$userId") },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Donation")
@@ -58,15 +85,26 @@ fun DonationListScreen(navController: NavController, totalDonationViewModel: Tot
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            if (donations.value.isEmpty()) {
-                Text(text = "No Donations Available", style = MaterialTheme.typography.bodyMedium)
+            // Show loading indicator while data is being fetched
+            if (isLoading) {
+                CircularProgressIndicator()
             } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(donations.value) { donation ->
-                        DonationCard(donation)
+                // Show error message if the API call fails
+                errorMessage.value?.let {
+                    Text(text = it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
+                }
+
+                // Show the donations list if data is available
+                if (donations.isNullOrEmpty()) {
+                    Text(text = "No Donations Available", style = MaterialTheme.typography.bodyMedium)
+                } else {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(donations!!) { donation ->
+                            DonationCard(donation)
+                        }
                     }
                 }
             }
@@ -74,8 +112,10 @@ fun DonationListScreen(navController: NavController, totalDonationViewModel: Tot
     }
 }
 
+
+
 @Composable
-fun DonationCard(donation: TotalDonation) {
+fun DonationCard(donation: Donatedinfo) {
     Card(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
@@ -88,22 +128,21 @@ fun DonationCard(donation: TotalDonation) {
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-
             Text(
-                text = "Amount: ₹${donation.amount}",
+                text = "Amount: ₹${donation.Amount}",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold
             )
 
             Text(
-                text = "Donor: ${donation.donorName}",
+                text = "Donor: ${donation.Donarname}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
 
-            // Display student batch (new addition)
+            // Display student batch
             Text(
-                text = "Batch: ${donation.Batchof}",
+                text = "Batch: ${donation.Batch}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )

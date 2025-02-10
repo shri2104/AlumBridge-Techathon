@@ -55,9 +55,9 @@ fun DonationListScreen2(navController: NavController, totalDonationViewModel: To
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(donations.value) { donation ->
-                        DonationCard(donation)
-                    }
+//                    items(donations.value) { donation ->
+//                        DonationCard(donation)
+//                    }
                 }
             }
         }

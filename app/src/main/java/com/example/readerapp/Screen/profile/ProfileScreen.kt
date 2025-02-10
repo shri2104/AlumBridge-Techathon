@@ -1,148 +1,192 @@
+
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.example.readerapp.Retrofit.ApiService
-import com.example.readerapp.Retrofit.ProfileData
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import com.example.readerapp.Navigation.ReaderScreens
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.readerapp.R
+import com.example.readerapp.Retrofit.ApiService
+import com.example.readerapp.Retrofit.ProfileData
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileFormScreen(apiService: ApiService, navController: NavHostController, userId: String) {
-    var name by remember { mutableStateOf(TextFieldValue("")) }
-    var email by remember { mutableStateOf(TextFieldValue("")) }
-    var phoneNumber by remember { mutableStateOf(TextFieldValue("")) }
-    var location by remember { mutableStateOf(TextFieldValue("")) }
-    var batch by remember { mutableStateOf(TextFieldValue("")) }
-    var currentWorkStatus by remember { mutableStateOf(TextFieldValue("")) }
-    val coroutineScope = rememberCoroutineScope()
+fun ProfileFormScreen(
+    navController: NavController,
+    userId: String,
+    apiService: ApiService
+) {
+    var profileData by remember { mutableStateOf<ProfileData?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val screenBackgroundColor = MaterialTheme.colorScheme.background
+
+    LaunchedEffect(userId) {
+        if (!userId.isNullOrEmpty()) {
+            isLoading = true
+            try {
+                profileData = apiService.Getstudentprofile(userId)
+                Log.d("ProfileData", "Fetched Profile: $profileData")
+            } catch (e: Exception) {
+                Log.e("API Error", "Error fetching student data: ${e.message}", e)
+                Toast.makeText(context, "Error fetching student data: ${e.message}", Toast.LENGTH_SHORT).show()
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Profile", style = MaterialTheme.typography.headlineMedium) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(id = R.drawable.logo_no_bg),
+                            contentDescription = "Student Logo",
+                            modifier = Modifier
+                                .size(80.dp)
+                                .padding(end = 8.dp)
+                        )
                     }
                 },
-                actions = {
-                    IconButton(onClick = { }) {
-                        Icon(Icons.Filled.AccountCircle, contentDescription = "Profile Icon")
-                    }
-                }
+                actions = {  }
             )
-        },
-        bottomBar = {
-            BottomInstituteNavigationBar(navController)
         }
-    ) { paddingValues ->
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(padding)
+                .background(screenBackgroundColor),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomTextField(value = name, onValueChange = { name = it }, label = "Name")
-            CustomTextField(value = email, onValueChange = { email = it }, label = "Email")
-            CustomTextField(value = phoneNumber, onValueChange = { phoneNumber = it }, label = "Phone Number")
-            CustomTextField(value = location, onValueChange = { location = it }, label = "Location")
-            CustomTextField(value = batch, onValueChange = { batch = it }, label = "Batch")
-            CustomTextField(value = currentWorkStatus, onValueChange = { currentWorkStatus = it }, label = "Current Work Status")
+            if (isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                profileData?.let { profile ->
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(top = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Student Profile",
+                            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
+                            textAlign = TextAlign.Center
+                        )
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = {
-                    val profileData = ProfileData(
-                        userId=userId,
-                        Name = name.text,
-                        Email = email.text,
-                        Phonenumber = phoneNumber.text,
-                        Location = location.text,
-                        Batch = batch.text,
-                        CurrentworkStatus = currentWorkStatus.text
-                    )
-                    coroutineScope.launch(Dispatchers.IO) {
-                        try {
-                            val response = apiService.StoreProfiledata(profileData)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = profile.Name,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            item {
+                                StudentProfileCard(profile)
+                            }
                         }
                     }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Submit")
+                } ?: run {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = "No student data available.",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun CustomTextField(value: TextFieldValue, onValueChange: (TextFieldValue) -> Unit, label: String) {
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(8.dp),
+fun StudentProfileCard(profile: ProfileData) {
+    Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp)
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            placeholder = { Text(text = "Enter $label") },
-            label = { Text(text = label) },
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.colors(
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                cursorColor = Color.Blue,
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White
-            )
-        )
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ProfileDetailWithElevation(value = profile.Name, icon = Icons.Default.Person, onEditClick = { })
+            ProfileDetailWithElevation(value = profile.Email ?: "Not Provided", icon = Icons.Default.Email, onEditClick = { })
+            ProfileDetailWithElevation(value = profile.Phonenumber ?: "Not Provided", icon = Icons.Default.Phone, onEditClick = { })
+            ProfileDetailWithElevation(value = profile.Location ?: "Not Provided", icon = Icons.Default.Place, onEditClick = { })
+            ProfileDetailWithElevation(value = profile.Batch ?: "Not Provided", icon = Icons.Default.Group, onEditClick = { })
+            ProfileDetailWithElevation(value = profile.CurrentworkStatus ?: "Not Provided", icon = Icons.Default.Work, onEditClick = { })
+        }
     }
 }
 
 @Composable
-fun BottomInstituteNavigationBar(navController: NavHostController) {
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
-        tonalElevation = 8.dp
+fun ProfileDetailWithElevation(value: String, icon: ImageVector, onEditClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .shadow(elevation = 4.dp, shape = MaterialTheme.shapes.medium),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
-        NavigationBarItem(
-            selected = false,
-            onClick = { navController.navigate(ReaderScreens.InstituteHomeScreen.name) },
-            icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
-            label = { Text("Home") }
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { navController.navigate("DonationInfo") },
-            icon = { Icon(Icons.Filled.Favorite, contentDescription = "Donation Portal") },
-            label = { Text("Donations") }
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { navController.navigate("JobListScreen") },
-            icon = { Icon(Icons.Filled.Work, contentDescription = "Job Postings") },
-            label = { Text("Jobs") }
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { navController.navigate("Directory") },
-            icon = { Icon(Icons.Filled.Group, contentDescription = "Alumni Directory") },
-            label = { Text("Directory") }
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(onClick = onEditClick) {
+                Icon(
+                    imageVector = Icons.Default.Create,
+                    contentDescription = "Edit",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.readerapp
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -34,15 +35,23 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.readerapp.Navigation.ReaderScreens
+import com.example.readerapp.Retrofit.ApiService
 import com.example.readerapp.Retrofit.createApiservice
+import com.example.readerapp.Screen.Institute.AlumniHighlightsSection
+import com.example.readerapp.Screen.Institute.RecentDonationsSection
+import com.example.readerapp.Screen.Institute.Trendingevent
 import com.example.readerapp.donationdata.TotalDonationViewModel
 import com.example.readerapp.viewmodel.JobViewModel
 
@@ -63,16 +72,30 @@ class MainActivity : ComponentActivity() {
 }
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RHomeScreen(navController: NavHostController,
-                jobViewModel: JobViewModel,
-                totalDonationViewModel: TotalDonationViewModel
+fun RHomeScreen(
+    navController: NavHostController,
+    jobViewModel: JobViewModel,
+    totalDonationViewModel: TotalDonationViewModel,
+    userId: String,
+    apiService: ApiService
 ) {
-    val totalJobs by jobViewModel.totalJobCount.collectAsState()
+    val context = LocalContext.current
+    var totalJobs by remember { mutableStateOf(0) }
     val donations = totalDonationViewModel.allTotalDonations.collectAsState(initial = emptyList())
     val totalDonationAmount = donations.value.sumOf { it.amount }.toString()
+    var expanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(userId) {
+        try {
+            val response = apiService.getJobsByUser(userId)
+            totalJobs = response.size
+        } catch (e: Exception) {
+            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -80,24 +103,42 @@ fun RHomeScreen(navController: NavHostController,
                     Text("AlumBridge", style = MaterialTheme.typography.titleLarge)
                 },
                 actions = {
-                    IconButton(onClick = {navController.navigate(ReaderScreens.ProfileScreen.name) }) {
+                    IconButton(onClick = { expanded = !expanded }) {
                         Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Profile",
-                            tint = MaterialTheme.colorScheme.onPrimary
+                            imageVector = Icons.Filled.AccountCircle,
+                            contentDescription = "Profile Icon",
+                            modifier = Modifier.size(24.dp)
                         )
                     }
-
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            onClick = {
+                                navController.navigate("StudentProfile/$userId")
+                                expanded = false
+                            },
+                            text = { Text("Profile") }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                navController.navigate("Directory/$userId")
+                                expanded = false
+                            },
+                            text = { Text("Directory") }
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f),
+                    titleContentColor = MaterialTheme.colorScheme.onSecondary
                 ),
                 modifier = Modifier
                     .shadow(4.dp, RoundedCornerShape(0.dp))
             )
         },
-        bottomBar = { BottomNavigationBar(navController=navController) }
+        bottomBar = { BottomNavigationBar(navController = navController,apiService,userId) }
     ) { paddingValues ->
         Surface(
             modifier = Modifier
@@ -110,7 +151,6 @@ fun RHomeScreen(navController: NavHostController,
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-
                 Text(
                     text = "Welcome to Home Dashboard",
                     style = MaterialTheme.typography.headlineMedium,
@@ -133,14 +173,43 @@ fun RHomeScreen(navController: NavHostController,
                     horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    StatisticsCard("Students", "0", Icons.Filled.Group)
-                    StatisticsCard("Jobs", totalJobs.toString(), Icons.Filled.Work)
-                    StatisticsCard("Donations", "₹$totalDonationAmount", Icons.Filled.Favorite)
+                    StatisticsCard("Alumni", "0", Icons.Filled.Group)
+                    StatisticsCard("Jobs", totalJobs.toString(), Icons.Filled.Work) // Display total jobs
+                    StatisticsCard("Donations", "₹$totalDonationAmount", Icons.Filled.Favorite) // Display total donation amount
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Trending Events",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                Trendingevent(navController, apiService, userId)
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Recent Donations",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                RecentDonationsSection(apiService, userId = userId)
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Alumni Highlights",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                AlumniHighlightsSection()
             }
         }
     }
 }
+
 
 @Composable
 fun StatisticsCard(label: String, value: String, icon: ImageVector) {
@@ -173,34 +242,41 @@ fun StatisticsCard(label: String, value: String, icon: ImageVector) {
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
+fun BottomNavigationBar(
+    navController: NavHostController,
+    apiService: ApiService,
+    userId: String
+) {
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.primary,
+        containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
         tonalElevation = 8.dp
     ) {
         NavigationBarItem(
             selected = false,
-            onClick = {navController.navigate("postedEvents")   },
+            onClick = {  },
+            icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
+            label = { Text("Home") }
+        )
+
+        NavigationBarItem(
+            selected = false,
+            onClick = {navController.navigate("postedEvent/$userId") },
             icon = { Icon(Icons.Filled.Event, contentDescription = "Events & Reunions") },
             label = { Text("Events") }
         )
+
         NavigationBarItem(
             selected = false,
-            onClick = {navController.navigate(ReaderScreens.DonationPortal.name)  },
+            onClick = { navController.navigate("DonationList/$userId")  },
             icon = { Icon(Icons.Filled.Favorite, contentDescription = "Donation Portal") },
             label = { Text("Donations") }
         )
+
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate(ReaderScreens.JobListScreen.name) },
+            onClick = {navController.navigate("JobListScreen/$userId") },
             icon = { Icon(Icons.Filled.Work, contentDescription = "Job Postings") },
             label = { Text("Jobs") }
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = {navController.navigate(ReaderScreens.Directory.name)   },
-            icon = { Icon(Icons.Filled.Group, contentDescription = "Alumni Directory") },
-            label = { Text("Directory") }
         )
     }
 }

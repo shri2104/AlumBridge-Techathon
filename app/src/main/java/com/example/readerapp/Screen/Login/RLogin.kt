@@ -105,7 +105,7 @@ fun RLoginScreen(
                                 }
                             }
 
-                            navController.navigate(ReaderScreens.ReaderHomeScreen.name)
+                            navController.navigate("StudentRegistrationForm/$userId")
                         }
                     }
                 }
@@ -146,6 +146,7 @@ fun RLoginScreen(
                     }
                 }
             }
+
             Spacer(modifier = Modifier.height(20.dp))
             Row(
                 modifier = Modifier

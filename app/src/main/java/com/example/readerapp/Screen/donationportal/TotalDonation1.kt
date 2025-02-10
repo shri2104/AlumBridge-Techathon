@@ -93,7 +93,8 @@ fun TDonationInputScreen(
                         userId=userId,
                         Amount = amount,
                         Donarname = donorName,
-                        Batch = batchof
+                        Batch = batchof,
+                        timestamp = System.currentTimeMillis(),
                     )
                     coroutineScope.launch(Dispatchers.IO) {
                         try {
