@@ -83,14 +83,25 @@ fun RHomeScreen(
 ) {
     val context = LocalContext.current
     var totalJobs by remember { mutableStateOf(0) }
-    val donations = totalDonationViewModel.allTotalDonations.collectAsState(initial = emptyList())
-    val totalDonationAmount = donations.value.sumOf { it.amount }.toString()
+    var totalAlumni by remember { mutableStateOf(0) }
+    var totalDonations by remember { mutableStateOf(0) }  // Store total donation count
+
     var expanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(userId) {
         try {
-            val response = apiService.getJobsByUser(userId)
-            totalJobs = response.size
+            // Fetch the total number of jobs
+            val jobsResponse = apiService.getJobsByUser(userId)
+            totalJobs = jobsResponse.size
+
+            // Fetch the alumni profile data (if needed)
+            val profilesResponse = apiService.getprofile(userId)
+            totalAlumni = profilesResponse.size
+
+            // Fetch total donations for the user
+            val donationResponse = apiService.Getalldonation(userId)
+            totalDonations = donationResponse.size  // Count total donations
+
         } catch (e: Exception) {
             Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
         }
@@ -173,9 +184,9 @@ fun RHomeScreen(
                     horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    StatisticsCard("Alumni", "0", Icons.Filled.Group)
-                    StatisticsCard("Jobs", totalJobs.toString(), Icons.Filled.Work) // Display total jobs
-                    StatisticsCard("Donations", "₹$totalDonationAmount", Icons.Filled.Favorite) // Display total donation amount
+                    StatisticsCard("Alumni", totalAlumni.toString(), Icons.Filled.Group)
+                    StatisticsCard("Jobs", totalJobs.toString(), Icons.Filled.Work)
+                    StatisticsCard("Donations", totalDonations.toString(), Icons.Filled.Favorite)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
