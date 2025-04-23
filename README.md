@@ -32,3 +32,6 @@ Alumni Users: Register using a unique ID shared by their institute. Access all f
 
 Institutes (Admin): Can post jobs, manage donations/events, view analytics, and access alumni profiles.
 
+Presentation Link :
+https://prezi.com/view/OKlOB1u45yGQ4UPoT7z1/
+
