@@ -46,7 +46,7 @@ fun JobListScreen(
                 jobList.addAll(response)
             }
         } catch (e: Exception) {
-            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+
         }
     }
 

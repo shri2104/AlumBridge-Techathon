@@ -40,6 +40,7 @@ import com.example.readerapp.Retrofit.Donatedinfo
 import com.example.readerapp.Retrofit.EventData
 import com.example.readerapp.donationdata.TotalDonationViewModel
 import com.example.readerapp.viewmodel.JobViewModel
+import com.google.firebase.auth.FirebaseAuth
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -75,7 +76,7 @@ fun InstituteDashBoard(
             totalDonations = donationResponse.size  // Count total donations
 
         } catch (e: Exception) {
-            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+
         }
     }
 
@@ -101,6 +102,7 @@ fun InstituteDashBoard(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
+                        // Profile menu item
                         DropdownMenuItem(
                             onClick = {
                                 navController.navigate("Instituteprfilepage/$userId")
@@ -108,12 +110,27 @@ fun InstituteDashBoard(
                             },
                             text = { Text("Profile") }
                         )
+
+                        // Directory menu item
                         DropdownMenuItem(
                             onClick = {
                                 navController.navigate("Directory/$userId")
                                 expanded = false
                             },
                             text = { Text("Directory") }
+                        )
+
+                        // Logout menu item
+                        DropdownMenuItem(
+                            onClick = {
+                                // Firebase logout logic
+                                FirebaseAuth.getInstance().signOut()
+
+                                // Navigate to the Login screen after sign out
+                                navController.navigate(ReaderScreens.LoginScreen.name) // Replace "Login" with your actual login screen route
+                                expanded = false
+                            },
+                            text = { Text("Logout") }
                         )
                     }
                 },
@@ -217,7 +234,6 @@ fun Trendingevent(navController: NavController, apiService: ApiService, userId: 
                 .sortedByDescending { parseDateToTimestamp((it.createdAt ?: "").toString()) }
             latestEvents.value = sortedEvents.take(2)
         } catch (e: Exception) {
-            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -303,7 +319,7 @@ fun RecentDonationsSection(apiService: ApiService, userId: String) {
 
             donations.value = sortedDonations
         } catch (e: Exception) {
-            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+
         }
     }
 
@@ -428,21 +444,18 @@ fun BottomInstituteNavigationBar(navController: NavController, userId: String) {
             icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
             label = { Text("Home") }
         )
-
         NavigationBarItem(
             selected = false,
             onClick = { navController.navigate("postedEvent/$userId") },
             icon = { Icon(Icons.Filled.Event, contentDescription = "Events & Reunions") },
             label = { Text("Events") }
         )
-
         NavigationBarItem(
             selected = false,
             onClick = {  navController.navigate("Donationdashboard/$userId") },
             icon = { Icon(Icons.Filled.Favorite, contentDescription = "Donation Portal") },
             label = { Text("Donations") }
         )
-
         NavigationBarItem(
             selected = false,
             onClick = {navController.navigate("JobListScreen/$userId") },
